@@ -345,6 +345,102 @@
     animation: slideDown 0.4s ease;
 }
 
+/* Result inner layout */
+.result-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid #eef2f7;
+    background: linear-gradient(90deg, rgba(30,144,255,0.03), rgba(0,195,255,0.02));
+}
+
+.result-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin: 0;
+}
+
+.confidence-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: white;
+}
+
+.confidence-high { background: #10b981; }
+.confidence-medium { background: #f59e0b; }
+.confidence-low { background: #ef4444; }
+
+.result-grid {
+    display: flex;
+    gap: 1rem;
+    padding: 1.5rem;
+    align-items: stretch;
+    flex-wrap: wrap;
+}
+
+.result-item {
+    flex: 1 1 220px;
+    background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+    border: 1px solid #eef2f7;
+    border-radius: 12px;
+    padding: 1.25rem;
+    text-align: center;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.04);
+}
+
+.result-value {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--primary-blue);
+}
+
+.result-label {
+    font-size: 0.95rem;
+    color: var(--text-light);
+    margin-top: 0.25rem;
+}
+
+.tips-section {
+    padding: 1.25rem 1.5rem 2rem;
+    border-top: 1px solid #f1f5f9;
+}
+
+.tips-section h4 {
+    margin: 0 0 0.75rem 0;
+    font-size: 1rem;
+    color: var(--text-dark);
+}
+
+.tips-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 0.5rem;
+}
+
+.tip-item {
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+    padding: 0.6rem 0.4rem;
+    background: #ffffff;
+    border-radius: 8px;
+    border: 1px solid #f1f5f9;
+}
+
+.tip-item i {
+    color: var(--primary-blue);
+    font-size: 1.15rem;
+    margin-top: 2px;
+}
+
+.tip-item:last-child { margin-bottom: 0; }
+
 /* ========================================
    HISTORY CARD
    ======================================== */

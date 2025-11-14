@@ -20,10 +20,11 @@ class AuthManager {
             registerForm.addEventListener('submit', (e) => this.handleRegister(e));
         }
 
-        // Logout buttons
+        // Logout buttons (attach only if not already attached by another module)
         const logoutBtnProfile = document.getElementById('logoutBtnProfile');
-        if (logoutBtnProfile) {
+        if (logoutBtnProfile && !logoutBtnProfile.dataset.logoutAttached) {
             logoutBtnProfile.addEventListener('click', () => this.handleLogout());
+            logoutBtnProfile.dataset.logoutAttached = 'true';
         }
     }
 

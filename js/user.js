@@ -33,10 +33,11 @@ class UserManager {
             passwordForm.addEventListener('submit', (e) => this.handlePasswordChange(e));
         }
 
-        // Logout button
+        // Logout button (attach only if not already attached by another module)
         const logoutBtn = document.getElementById('logoutBtnProfile');
-        if (logoutBtn) {
+        if (logoutBtn && !logoutBtn.dataset.logoutAttached) {
             logoutBtn.addEventListener('click', () => this.handleLogout());
+            logoutBtn.dataset.logoutAttached = 'true';
         }
     }
 

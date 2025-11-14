@@ -203,13 +203,32 @@
                                     <div class="select-wrapper">
                                         <select id="golongan_pln" name="golongan_pln" class="select-predict" required>
                                             <option value="">Pilih golongan tarif</option>
-                                            <option value="R-1/900">R-1/900 VA (Subsidi)</option>
-                                            <option value="R-1/1300">R-1/1300 VA (Subsidi)</option>
-                                            <option value="R-1/2200">R-1/2200 VA</option>
-                                            <option value="R-2/3500">R-2/3500 VA</option>
-                                            <option value="R-3/5500">R-3/5500 VA</option>
-                                            <option value="B-2/6600">B-2/6600 VA (Bisnis)</option>
-                                            <option value="I-3/14000">I-3/14000 VA (Industri)</option>
+                                            <optgroup label="Rumah Tangga">
+                                                <option value="1352">R-1/TR 900 VA (Subsidi) - Rp 1.352/kWh</option>
+                                                <option value="1444.70">R-1/TR 1.300 VA - Rp 1.444,70/kWh</option>
+                                                <option value="1444.70">R-1/TR 2.200 VA - Rp 1.444,70/kWh</option>
+                                                <option value="1699.53">R-2/TR 3.500-5.500 VA - Rp 1.699,53/kWh</option>
+                                                <option value="1699.53">R-3/TR ≥6.600 VA - Rp 1.699,53/kWh</option>
+                                            </optgroup>
+                                            <optgroup label="Bisnis">
+                                                <option value="1444.70">B-1/TR 900-5.500 VA - Rp 1.444,70/kWh</option>
+                                                <option value="1444.70">B-2/TR 6.600-200 kVA - Rp 1.444,70/kWh</option>
+                                                <option value="1114.74">B-3/TM >200 kVA - Rp 1.114,74/kWh</option>
+                                            </optgroup>
+                                            <optgroup label="Industri">
+                                                <option value="1444.70">I-1/TR 900-5.500 VA - Rp 1.444,70/kWh</option>
+                                                <option value="1444.70">I-2/TR 6.600-200 kVA - Rp 1.444,70/kWh</option>
+                                                <option value="1114.74">I-3/TM >200 kVA - Rp 1.114,74/kWh</option>
+                                                <option value="996.74">I-4/TT ≥30.000 kVA - Rp 996,74/kWh</option>
+                                            </optgroup>
+                                            <optgroup label="Layanan Publik">
+                                                <option value="1699.53">P-1/TR 6.600-200 kVA - Rp 1.699,53/kWh</option>
+                                                <option value="1522.88">P-2/TM >200 kVA - Rp 1.522,88/kWh</option>
+                                                <option value="1699.53">P-3/TR (Jalan Umum) - Rp 1.699,53/kWh</option>
+                                            </optgroup>
+                                            <optgroup label="Lainnya">
+                                                <option value="1644.52">L (Layanan Khusus) - Rp 1.644,52/kWh</option>
+                                            </optgroup>
                                         </select>
                                         <i class="ri-arrow-down-s-line"></i>
                                     </div>

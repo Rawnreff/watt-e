@@ -98,7 +98,12 @@ class PredictionManager {
             </div>
         `;
 
-        resultElement.style.display = 'block';
+        // toggle show class (CSS handles animation/display)
+        resultElement.classList.remove('show');
+        // force reflow for animation restart
+        // eslint-disable-next-line no-unused-expressions
+        resultElement.offsetHeight;
+        resultElement.classList.add('show');
         resultElement.scrollIntoView({ behavior: 'smooth' });
     }
 
