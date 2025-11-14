@@ -213,3 +213,187 @@ class UIManager {
 document.addEventListener('DOMContentLoaded', () => {
     window.uiManager = new UIManager();
 });
+
+// Global scroll progress bar initializer (applies to most pages)
+function initGlobalScrollProgress() {
+    // avoid duplicate progress bars
+    if (document.getElementById('globalProgressBar')) return;
+
+    const progressBar = document.createElement('div');
+    progressBar.id = 'globalProgressBar';
+    progressBar.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 3px;
+        background: linear-gradient(90deg, #1e90ff, #00c3ff);
+        width: 0%;
+        z-index: 10000;
+        transition: width 0.12s linear;
+    `;
+    document.body.appendChild(progressBar);
+
+    function update() {
+        const doc = document.documentElement;
+        const windowHeight = doc.scrollHeight - doc.clientHeight;
+        const scrolled = windowHeight > 0 ? (window.scrollY / windowHeight) * 100 : 0;
+        progressBar.style.width = scrolled + '%';
+    }
+
+    window.addEventListener('scroll', update, { passive: true });
+    // update on load/resize to set initial state
+    window.addEventListener('resize', update);
+    update();
+}
+
+// Apply the global progress bar on all pages except login/register
+document.addEventListener('DOMContentLoaded', () => {
+    const page = window.location.pathname.split('/').pop() || 'index.html';
+    if (page !== 'login.html' && page !== 'register.html') {
+        try {
+            initGlobalScrollProgress();
+        } catch (e) {
+            console.error('Failed to initialize global scroll progress', e);
+        }
+    }
+});
+
+// Cursor follower: creates a small dot + soft halo that follows the pointer smoothly
+function initCursorFollower() {
+    // Disable on touch devices or if already initialized
+    if (typeof window === 'undefined') return;
+    if ('ontouchstart' in window || navigator.maxTouchPoints > 0) return;
+    if (document.getElementById('cursorDot')) return;
+
+    const dot = document.createElement('div');
+    dot.id = 'cursorDot';
+    dot.className = 'cursor-dot';
+
+    const halo = document.createElement('div');
+    halo.id = 'cursorHalo';
+    halo.className = 'cursor-follower';
+
+    document.body.appendChild(halo);
+    document.body.appendChild(dot);
+
+    let mouseX = window.innerWidth / 2;
+    let mouseY = window.innerHeight / 2;
+    let posX = mouseX;
+    let posY = mouseY;
+
+    const ease = 0.18;
+
+    function onMove(e) {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+        dot.style.opacity = '1';
+        halo.style.opacity = '1';
+    }
+
+    function update() {
+        posX += (mouseX - posX) * ease;
+        posY += (mouseY - posY) * ease;
+
+        dot.style.transform = `translate(${posX}px, ${posY}px) translate(-50%, -50%)`;
+        halo.style.transform = `translate(${posX}px, ${posY}px) translate(-50%, -50%)`;
+        requestAnimationFrame(update);
+    }
+
+    // Interactive element hover states
+    function addHoverListeners() {
+        const selectors = ['a', 'button', '.btn', 'input', 'textarea', 'select', '.nav-link', '.feature-card'];
+        const elems = document.querySelectorAll(selectors.join(','));
+        elems.forEach(el => {
+            el.addEventListener('mouseenter', () => {
+                document.documentElement.classList.add('cursor-hover');
+            });
+            el.addEventListener('mouseleave', () => {
+                document.documentElement.classList.remove('cursor-hover');
+            });
+        });
+    }
+
+    window.addEventListener('mousemove', onMove, { passive: true });
+    window.addEventListener('touchstart', () => {
+        // remove follower on first touch to avoid stuck visuals
+        dot.remove();
+        halo.remove();
+    }, { passive: true });
+
+    // Click / pointer press animation: briefly add a class to trigger CSS animation
+    let clickTimeout = null;
+    function onPointerDown(e) {
+        try {
+            // make minimal checks in case elements were removed
+            if (!dot || !halo) return;
+            document.documentElement.classList.add('cursor-click');
+            dot.classList.add('cursor-clicked');
+            halo.classList.add('cursor-clicked');
+
+            // create ripple at pointer location for extra visual feedback
+            try {
+                const ripple = document.createElement('div');
+                ripple.className = 'cursor-ripple';
+                // position it at the pointer
+                const x = (e.touches && e.touches[0]) ? e.touches[0].clientX : e.clientX;
+                const y = (e.touches && e.touches[0]) ? e.touches[0].clientY : e.clientY;
+                ripple.style.left = x + 'px';
+                ripple.style.top = y + 'px';
+
+                // stronger ripple for interactive targets
+                if (e.target && e.target.closest && e.target.closest('a, button, .btn, .feature-card, .nav-link')) {
+                    ripple.classList.add('ripple-strong');
+                }
+
+                document.body.appendChild(ripple);
+                // force reflow then animate
+                // eslint-disable-next-line no-unused-expressions
+                ripple.offsetWidth;
+                ripple.classList.add('animate');
+
+                setTimeout(() => {
+                    ripple.remove();
+                }, 520);
+            } catch (rErr) {
+                // ignore ripple errors
+                console.warn('ripple creation failed', rErr);
+            }
+
+            if (clickTimeout) clearTimeout(clickTimeout);
+            clickTimeout = setTimeout(() => {
+                document.documentElement.classList.remove('cursor-click');
+                if (dot) dot.classList.remove('cursor-clicked');
+                if (halo) halo.classList.remove('cursor-clicked');
+                clickTimeout = null;
+            }, 360);
+        } catch (err) {
+            // swallow errors to avoid breaking page
+            console.error('cursor click handler error', err);
+        }
+    }
+
+    function onPointerUp() {
+        if (clickTimeout) {
+            clearTimeout(clickTimeout);
+            clickTimeout = null;
+        }
+        document.documentElement.classList.remove('cursor-click');
+        if (dot) dot.classList.remove('cursor-clicked');
+        if (halo) halo.classList.remove('cursor-clicked');
+    }
+
+    window.addEventListener('pointerdown', onPointerDown, { passive: true });
+    window.addEventListener('pointerup', onPointerUp, { passive: true });
+
+    addHoverListeners();
+    update();
+}
+
+// Initialize cursor follower on pages where it makes sense
+document.addEventListener('DOMContentLoaded', () => {
+    try {
+        initCursorFollower();
+    } catch (e) {
+        console.error('Failed to initialize cursor follower', e);
+    }
+});
