@@ -15,7 +15,18 @@ class PredictionModel:
         predictions = self.collection.find(
             {'user_id': user_id}
         ).sort('created_at', -1).limit(limit)
-        
+
+        return list(predictions)
+
+    def get_user_predictions_since(self, user_id, since_date):
+        """
+        Return predictions for a user with created_at >= since_date sorted desc
+        since_date must be a datetime.datetime
+        """
+        query = {'user_id': user_id}
+        if since_date:
+            query['created_at'] = {'$gte': since_date}
+        predictions = self.collection.find(query).sort('created_at', -1)
         return list(predictions)
 
 prediction_model = PredictionModel()
