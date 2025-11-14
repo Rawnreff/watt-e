@@ -397,3 +397,144 @@ document.addEventListener('DOMContentLoaded', () => {
         console.error('Failed to initialize cursor follower', e);
     }
 });
+
+/* Modal utilities: showConfirm, showPrompt, showAlert
+   Returns Promises so callers can await user response. */
+function createModal({ title = '', message = '', input = false, inputPlaceholder = '', confirmText = 'OK', cancelText = 'Batal', danger = false }) {
+    // backdrop
+    const backdrop = document.createElement('div');
+    backdrop.className = 'modal-backdrop';
+
+    const modal = document.createElement('div');
+    modal.className = 'modal-confirm';
+
+    const header = document.createElement('div');
+    header.className = 'modal-header';
+    header.innerHTML = `<div class="modal-title">${title}</div>`;
+
+    const body = document.createElement('div');
+    body.className = 'modal-body';
+    const msg = document.createElement('div');
+    msg.className = 'modal-message';
+    msg.textContent = message;
+    body.appendChild(msg);
+
+    let inputEl = null;
+    if (input) {
+        inputEl = document.createElement('input');
+        inputEl.className = 'modal-input';
+        inputEl.placeholder = inputPlaceholder || '';
+        body.appendChild(inputEl);
+    }
+
+    const actions = document.createElement('div');
+    actions.className = 'modal-actions';
+
+    const btnCancel = document.createElement('button');
+    btnCancel.className = 'btn btn-cancel';
+    btnCancel.textContent = cancelText;
+
+    const btnConfirm = document.createElement('button');
+    btnConfirm.className = 'btn ' + (danger ? 'btn-danger' : 'btn-confirm');
+    btnConfirm.textContent = confirmText;
+
+    actions.appendChild(btnCancel);
+    actions.appendChild(btnConfirm);
+
+    modal.appendChild(header);
+    modal.appendChild(body);
+    modal.appendChild(actions);
+
+    backdrop.appendChild(modal);
+
+    return { backdrop, modal, inputEl, btnCancel, btnConfirm };
+}
+
+function showConfirm({ title = 'Konfirmasi', message = '', confirmText = 'Ya', cancelText = 'Batal', danger = false } = {}) {
+    return new Promise((resolve) => {
+        const { backdrop, modal, btnCancel, btnConfirm } = createModal({ title, message, confirmText, cancelText, danger });
+        document.body.appendChild(backdrop);
+        // small entrance
+        requestAnimationFrame(() => modal.classList.add('show'));
+
+        const cleanup = () => { backdrop.remove(); };
+
+        btnCancel.addEventListener('click', () => { cleanup(); resolve(false); });
+        btnConfirm.addEventListener('click', () => { cleanup(); resolve(true); });
+
+        backdrop.addEventListener('click', (e) => {
+            if (e.target === backdrop) { cleanup(); resolve(false); }
+        });
+
+        // keyboard support
+        function onKey(e) {
+            if (e.key === 'Escape') { cleanup(); resolve(false); }
+            if (e.key === 'Enter') { cleanup(); resolve(true); }
+        }
+        document.addEventListener('keydown', onKey, { once: true });
+    });
+}
+
+function showPrompt({ title = 'Konfirmasi', message = '', placeholder = '', confirmText = 'Kirim', cancelText = 'Batal', requiredMatch = null } = {}) {
+    return new Promise((resolve) => {
+        const { backdrop, modal, inputEl, btnCancel, btnConfirm } = createModal({ title, message, input: true, inputPlaceholder: placeholder, confirmText, cancelText });
+        document.body.appendChild(backdrop);
+        requestAnimationFrame(() => modal.classList.add('show'));
+
+        const cleanup = () => { backdrop.remove(); };
+
+        btnCancel.addEventListener('click', () => { cleanup(); resolve(null); });
+        btnConfirm.addEventListener('click', () => {
+            const val = inputEl ? inputEl.value : null;
+            if (requiredMatch && val !== requiredMatch) {
+                // indicate error briefly
+                inputEl.style.borderColor = '#ef4444';
+                setTimeout(() => inputEl.style.borderColor = '', 900);
+                return;
+            }
+            cleanup();
+            resolve(val);
+        });
+
+        backdrop.addEventListener('click', (e) => {
+            if (e.target === backdrop) { cleanup(); resolve(null); }
+        });
+
+        // focus input
+        setTimeout(() => { if (inputEl) inputEl.focus(); }, 50);
+
+        function onKey(e) {
+            if (e.key === 'Escape') { cleanup(); resolve(null); }
+            if (e.key === 'Enter') { btnConfirm.click(); }
+        }
+        document.addEventListener('keydown', onKey, { once: true });
+    });
+}
+
+function showAlert({ title = 'Info', message = '', confirmText = 'OK' } = {}) {
+    return new Promise((resolve) => {
+        const { backdrop, modal, btnConfirm } = createModal({ title, message, confirmText, cancelText: null });
+        // remove cancel button
+        const cancel = modal.querySelector('.btn-cancel');
+        if (cancel) cancel.remove();
+
+        document.body.appendChild(backdrop);
+        requestAnimationFrame(() => modal.classList.add('show'));
+
+        const cleanup = () => { backdrop.remove(); };
+
+        btnConfirm.addEventListener('click', () => { cleanup(); resolve(true); });
+
+        backdrop.addEventListener('click', (e) => {
+            if (e.target === backdrop) { cleanup(); resolve(true); }
+        });
+
+        function onKey(e) { if (e.key === 'Escape' || e.key === 'Enter') { cleanup(); resolve(true); } }
+        document.addEventListener('keydown', onKey, { once: true });
+    });
+}
+
+// Expose globally for other modules
+window.showConfirm = showConfirm;
+window.showPrompt = showPrompt;
+window.showAlert = showAlert;

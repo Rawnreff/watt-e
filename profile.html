@@ -518,14 +518,35 @@
             alert('Fitur ekspor data akan segera hadir!');
         }
 
-        function deleteAccount() {
-            if (confirm('⚠️ PERINGATAN!\n\nApakah Anda yakin ingin menghapus akun?\n\nSemua data Anda termasuk riwayat prediksi akan dihapus secara permanen dan tidak dapat dikembalikan.\n\nKetik "HAPUS" untuk melanjutkan.')) {
-                const confirmation = prompt('Ketik "HAPUS" untuk mengkonfirmasi:');
-                if (confirmation === 'HAPUS') {
-                    alert('Fitur penghapusan akun akan segera hadir!');
-                } else {
-                    alert('Penghapusan akun dibatalkan.');
-                }
+        async function deleteAccount() {
+            const confirmed = await showConfirm({
+                title: 'Hapus Akun',
+                message: '⚠️ PERINGATAN!\n\nApakah Anda yakin ingin menghapus akun?\n\nSemua data Anda termasuk riwayat prediksi akan dihapus secara permanen dan tidak dapat dikembalikan.',
+                confirmText: 'Hapus Akun',
+                cancelText: 'Batal',
+                danger: true
+            });
+
+            if (!confirmed) {
+                await showAlert({ title: 'Dibatalkan', message: 'Penghapusan akun dibatalkan.' });
+                return;
+            }
+
+            // require explicit type 'HAPUS' to confirm
+            const typed = await showPrompt({
+                title: 'Konfirmasi Tindakan',
+                message: 'Ketik "HAPUS" untuk melanjutkan penghapusan akun:',
+                placeholder: 'Ketik HAPUS di sini',
+                confirmText: 'Konfirmasi',
+                cancelText: 'Batal',
+                requiredMatch: 'HAPUS'
+            });
+
+            if (typed === 'HAPUS') {
+                // TODO: call API to delete account
+                await showAlert({ title: 'Dihapus', message: 'Fitur penghapusan akun akan segera hadir!' });
+            } else {
+                await showAlert({ title: 'Dibatalkan', message: 'Penghapusan akun dibatalkan.' });
             }
         }
 

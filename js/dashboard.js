@@ -110,8 +110,8 @@ class DashboardManager {
             return;
         }
 
-        // Show only 5 most recent
-        const recentPredictions = this.predictions.slice(0, 5);
+        // Show only 10 most recent
+        const recentPredictions = this.predictions.slice(0,10);
 
         // helper to parse numeric values robustly
         const parseNumericFromString = (input) => {
@@ -261,6 +261,143 @@ class DashboardManager {
         this.updateElement('avgMonthlyUsage', `${avgKwh.toFixed(1)} kWh`);
         this.updateElement('highestUsage', `${maxKwh.toFixed(1)} kWh`);
         this.updateElement('lowestUsage', `${minKwh.toFixed(1)} kWh`);
+        // Render monthly comparison chart
+        try {
+            this.renderMonthlyComparisonChart();
+        } catch (e) {
+            console.error('Failed to render monthly chart', e);
+        }
+    }
+
+    // Render a simple bar chart for monthly comparison using <canvas>
+    renderMonthlyComparisonChart() {
+        const container = document.querySelector('.comparison-chart');
+        if (!container) return;
+
+        // gather monthly values from predictions: use prediction.month_target if available, else created_at
+        const parseNumericFromString = (input) => {
+            if (input === null || input === undefined) return 0;
+            const s = String(input);
+            let cleaned = s.replace(/[^0-9.,]/g, '');
+            if (!cleaned) return 0;
+            if (cleaned.indexOf('.') > -1 && cleaned.indexOf(',') > -1) {
+                cleaned = cleaned.replace(/\./g, '').replace(',', '.');
+            } else if (cleaned.indexOf(',') > -1) {
+                cleaned = cleaned.replace(/,/g, '.');
+            }
+            cleaned = cleaned.replace(/,/g, '');
+            const num = parseFloat(cleaned);
+            return Number.isFinite(num) ? num : 0;
+        };
+
+        const monthMap = new Map();
+        for (const p of this.predictions) {
+            const pred = p.prediction || {};
+            const kwh = parseNumericFromString(pred.kwh_prediction) || parseNumericFromString(p.kwh_last_month) || 0;
+            let key = null;
+            if (p.month_target) {
+                const m = String(p.month_target).slice(0,7);
+                key = m;
+            } else if (p.created_at) {
+                const d = new Date(p.created_at);
+                if (!isNaN(d)) {
+                    key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+                }
+            }
+            if (!key) continue;
+            monthMap.set(key, (monthMap.get(key) || 0) + kwh);
+        }
+
+        // If no data, show placeholder and remove existing canvas
+        if (monthMap.size === 0) {
+            const placeholder = container.querySelector('.chart-placeholder');
+            if (placeholder) placeholder.style.display = 'flex';
+            const canvas = container.querySelector('canvas.monthly-chart');
+            if (canvas) canvas.remove();
+            return;
+        }
+
+        // hide placeholder
+        const placeholder = container.querySelector('.chart-placeholder');
+        if (placeholder) placeholder.style.display = 'none';
+
+        // Build sorted months (last 6 months)
+        const months = Array.from(monthMap.keys()).sort();
+        const recent = months.slice(-6);
+        const labels = recent.map(m => {
+            const [y, mm] = m.split('-');
+            const date = new Date(Number(y), Number(mm)-1, 1);
+            return date.toLocaleString('id-ID', { month: 'short', year: 'numeric' });
+        });
+        const values = recent.map(m => monthMap.get(m) || 0);
+
+        // create or reuse canvas
+        let canvas = container.querySelector('canvas.monthly-chart');
+        if (!canvas) {
+            canvas = document.createElement('canvas');
+            canvas.className = 'monthly-chart';
+            canvas.style.width = '100%';
+            canvas.style.height = '220px';
+            container.appendChild(canvas);
+        }
+
+        const ctx = canvas.getContext('2d');
+        const dpr = window.devicePixelRatio || 1;
+        const rect = canvas.getBoundingClientRect();
+        canvas.width = Math.max(300, rect.width * dpr);
+        canvas.height = Math.max(160, rect.height * dpr);
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        ctx.clearRect(0,0,rect.width,rect.height);
+
+        const padding = { top: 20, right: 12, bottom: 36, left: 28 };
+        const chartWidth = rect.width - padding.left - padding.right;
+        const chartHeight = rect.height - padding.top - padding.bottom;
+
+        const maxVal = Math.max(...values, 1);
+        const gridLines = 4;
+
+        // draw grid lines
+        ctx.strokeStyle = 'rgba(0,0,0,0.06)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        for (let i=0;i<=gridLines;i++) {
+            const y = padding.top + (i * chartHeight / gridLines);
+            ctx.moveTo(padding.left, y + 0.5);
+            ctx.lineTo(padding.left + chartWidth, y + 0.5);
+        }
+        ctx.stroke();
+
+        const barGap = 12;
+        const barCount = values.length;
+        const barWidth = Math.max(16, (chartWidth - (barGap * (barCount-1))) / barCount);
+        for (let i=0;i<barCount;i++) {
+            const v = values[i];
+            const x = padding.left + i * (barWidth + barGap);
+            const h = (v / maxVal) * chartHeight;
+            const y = padding.top + (chartHeight - h);
+
+            ctx.fillStyle = 'rgba(30,144,255,0.12)';
+            ctx.fillRect(x, padding.top, barWidth, chartHeight);
+
+            ctx.fillStyle = 'rgba(30,144,255,0.95)';
+            ctx.fillRect(x, y, barWidth, h);
+
+            ctx.fillStyle = 'rgba(0,0,0,0.7)';
+            ctx.font = '600 12px "Segoe UI", Tahoma, sans-serif';
+            ctx.textAlign = 'center';
+            const labelX = x + barWidth/2;
+            ctx.fillText(`${v.toFixed(0)} kWh`, labelX, y - 8);
+
+            ctx.fillStyle = 'rgba(0,0,0,0.6)';
+            ctx.font = '12px "Segoe UI", Tahoma, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(labels[i], labelX, padding.top + chartHeight + 20);
+        }
+
+        if (!this._monthlyChartResizeHandler) {
+            this._monthlyChartResizeHandler = () => this.renderMonthlyComparisonChart();
+            window.addEventListener('resize', this._monthlyChartResizeHandler);
+        }
     }
 
     calculateEfficiencyScore(current, average) {

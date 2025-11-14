@@ -111,15 +111,22 @@ class AuthManager {
     }
 
     handleLogout() {
-        if (confirm('Apakah Anda yakin ingin logout?')) {
+        // use styled confirm modal
+        showConfirm({
+            title: 'Logout',
+            message: 'Apakah Anda yakin ingin logout?',
+            confirmText: 'Logout',
+            cancelText: 'Batal'
+        }).then((confirmed) => {
+            if (!confirmed) return;
             this.api.removeToken();
             localStorage.removeItem('watt_e_user');
             this.currentUser = null;
             this.showNotification('Logout berhasil', 'success');
             setTimeout(() => {
                 window.location.href = 'index.html';
-            }, 1000);
-        }
+            }, 900);
+        });
     }
 
     async loadUserData() {

@@ -561,7 +561,8 @@
                     <div class="calculator-form">
                         <div class="form-group">
                             <label for="calcGolongan" class="form-label">Golongan Tarif</label>
-                            <select id="calcGolongan" class="form-select">
+                            <div class="select-with-preview">
+                                <select id="calcGolongan" class="form-select">
                                 <optgroup label="Rumah Tangga">
                                     <option value="1352">R-1/TR 900 VA (Subsidi) - Rp 1.352/kWh</option>
                                     <option value="1444.70">R-1/TR 1.300 VA - Rp 1.444,70/kWh</option>
@@ -588,7 +589,9 @@
                                 <optgroup label="Lainnya">
                                     <option value="1644.52">L (Layanan Khusus) - Rp 1.644,52/kWh</option>
                                 </optgroup>
-                            </select>
+                                </select>
+                                <div class="select-preview" id="calcTariffPreview">Rp -</div>
+                            </div>
                         </div>
                         <div class="form-group">
                             <label for="calcKwh" class="form-label">Pemakaian (kWh)</label>
@@ -680,6 +683,29 @@
 
         document.getElementById('calcKwh').addEventListener('input', function() {
             this.classList.remove('error');
+        });
+
+        // Update preview for selected tariff
+        function updateCalcPreview() {
+            const sel = document.getElementById('calcGolongan');
+            const preview = document.getElementById('calcTariffPreview');
+            if (!sel || !preview) return;
+            const val = parseFloat(sel.value) || 0;
+            preview.textContent = val > 0 ? ('Rp ' + val.toLocaleString('id-ID', {minimumFractionDigits: 0})) : 'Rp -';
+            // mark subsidized if the selected option text contains 'Subsidi' or value equals 1352
+            const opt = sel.options[sel.selectedIndex];
+            if (opt && (/subsidi/i.test(opt.text) || parseFloat(opt.value) === 1352)) {
+                preview.classList.add('subsidized');
+            } else {
+                preview.classList.remove('subsidized');
+            }
+        }
+
+        // initialize preview on load
+        document.addEventListener('DOMContentLoaded', () => {
+            updateCalcPreview();
+            const sel = document.getElementById('calcGolongan');
+            if (sel) sel.addEventListener('change', updateCalcPreview);
         });
     </script>
 </body>

@@ -353,3 +353,78 @@ h1, h2, h3, h4, h5, h6 {
 
 .cursor-ripple.ripple-strong { background: rgba(30,144,255,0.22); }
 .cursor-ripple.animate { animation: cursorRipple 420ms cubic-bezier(.2,.9,.2,1) forwards; }
+
+/* Styled modal confirm/alert/prompt */
+.modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(11, 23, 39, 0.48);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 12000;
+    padding: 20px;
+}
+
+.modal-confirm {
+    background: var(--white);
+    border-radius: 12px;
+    width: 100%;
+    max-width: 520px;
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+    transform: translateY(8px) scale(0.99);
+    transition: transform 180ms ease, opacity 180ms ease;
+}
+
+.modal-confirm.show { transform: translateY(0) scale(1); }
+
+.modal-confirm .modal-header {
+    padding: 18px 20px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    border-bottom: 1px solid rgba(15, 23, 42, 0.04);
+}
+
+.modal-confirm .modal-body {
+    padding: 18px 20px;
+    color: var(--text-dark);
+}
+
+.modal-confirm .modal-title {
+    font-weight: 700;
+    font-size: 1.05rem;
+}
+
+.modal-confirm .modal-message {
+    margin-top: 6px;
+    color: var(--text-light);
+    font-size: 0.95rem;
+    white-space: pre-wrap;
+}
+
+.modal-confirm .modal-input {
+    width: 100%;
+    padding: 10px 12px;
+    margin-top: 12px;
+    border-radius: 8px;
+    border: 1px solid #e6eef9;
+}
+
+.modal-confirm .modal-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    padding: 14px 20px;
+    border-top: 1px solid rgba(15, 23, 42, 0.04);
+}
+
+.modal-confirm .btn { padding: 10px 14px; border-radius: 8px; }
+.modal-confirm .btn-cancel { background: transparent; border: 1px solid rgba(15,23,42,0.06); }
+.modal-confirm .btn-confirm { background: var(--primary-blue); color: var(--white); border: none; }
+.modal-confirm .btn-danger { background: #ef4444; color: white; }
+
+@media (max-width: 480px) {
+    .modal-confirm { max-width: 92%; }
+}

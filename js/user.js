@@ -217,18 +217,24 @@ class UserManager {
     }
 
     handleLogout() {
-        if (confirm('Apakah Anda yakin ingin logout?')) {
+        showConfirm({
+            title: 'Logout',
+            message: 'Apakah Anda yakin ingin logout?',
+            confirmText: 'Logout',
+            cancelText: 'Batal'
+        }).then((confirmed) => {
+            if (!confirmed) return;
             // Clear all auth data
             this.api.removeToken();
             localStorage.removeItem('watt_e_user');
-            
+
             this.showNotification('Logout berhasil!', 'success');
-            
+
             // Redirect to login
             setTimeout(() => {
                 window.location.href = 'login.html';
-            }, 1000);
-        }
+            }, 900);
+        });
     }
 
     updateElement(id, value) {

@@ -324,6 +324,48 @@
     box-shadow: 0 0 0 4px rgba(30, 144, 255, 0.1);
 }
 
+/* Enhanced select preview for calculator */
+.select-with-preview { position: relative; display: flex; align-items: center; }
+.select-with-preview .form-select { appearance: none; -webkit-appearance: none; padding-right: 140px; }
+.select-with-preview::after {
+    content: '';
+    position: absolute;
+    right: 12px;
+    width: 12px;
+    height: 12px;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='%230063b3' d='M5.23 7.21a.75.75 0 011.06-.02L10 10.88l3.71-3.69a.75.75 0 111.06 1.06l-4.24 4.22a.75.75 0 01-1.06 0L5.25 8.25a.75.75 0 01-.02-1.04z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    pointer-events: none;
+}
+.select-preview {
+    position: absolute;
+    right: 40px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: linear-gradient(90deg, rgba(30,144,255,0.06), rgba(0,195,255,0.03));
+    padding: 8px 12px;
+    border-radius: 999px;
+    font-weight: 700;
+    color: var(--primary-blue);
+    font-size: 0.95rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid rgba(30,144,255,0.08);
+}
+.select-preview.subsidized { background: linear-gradient(90deg, rgba(16,185,129,0.08), rgba(16,185,129,0.03)); color: #059669; border-color: rgba(16,185,129,0.12); }
+.select-preview .preview-label { font-size: 0.85rem; color: var(--text-light); font-weight: 600; }
+
+/* Improve optgroup visuals */
+.calculator-form .form-select optgroup { font-weight: 800; color: var(--primary-dark); padding: 6px 0; }
+.calculator-form .form-select option { padding: 8px 6px; color: var(--text-dark); }
+
+/* Slightly larger select on small screens */
+@media (max-width: 480px) {
+    .select-with-preview .form-select { padding-right: 120px; }
+    .select-preview { right: 12px; font-size: 0.9rem; }
+}
+
 .calculator-form .form-input.error {
     border-color: #ef4444;
     box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.1);
