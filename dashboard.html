@@ -129,7 +129,7 @@
             <div class="welcome-section">
                 <div class="welcome-content">
                     <h1 class="welcome-title">Selamat Datang, <span id="userGreeting">Pengguna</span>! 👋</h1>
-                    <p class="welcome-subtitle">Kelola dan pantau konsumsi listrik Anda dengan mudah</p>
+                    <p class="welcome-subtitle">Kelola dan pantau konsumsi listrik Anda dengan mudah dan efisien</p>
                 </div>
                 <div class="welcome-actions">
                     <a href="predict.html" class="btn btn-primary">
@@ -153,7 +153,7 @@
                         <div class="stat-value" id="currentUsage">-</div>
                         <div class="stat-label">Penggunaan Bulan Ini</div>
                         <div class="stat-trend" id="usageTrend">
-                            <i class="ri-arrow-up-line"></i>
+                            <i class="ri-line-chart-line"></i>
                             <span>Loading...</span>
                         </div>
                     </div>
@@ -167,7 +167,7 @@
                         <div class="stat-value" id="currentCost">-</div>
                         <div class="stat-label">Perkiraan Biaya</div>
                         <div class="stat-trend" id="costTrend">
-                            <i class="ri-arrow-up-line"></i>
+                            <i class="ri-line-chart-line"></i>
                             <span>Loading...</span>
                         </div>
                     </div>
@@ -195,7 +195,7 @@
                         <div class="stat-value" id="efficiencyScore">-</div>
                         <div class="stat-label">Skor Efisiensi</div>
                         <div class="stat-trend" id="efficiencyTrend">
-                            <i class="ri-arrow-up-line"></i>
+                            <i class="ri-line-chart-line"></i>
                             <span>Loading...</span>
                         </div>
                     </div>
@@ -208,15 +208,27 @@
                     <!-- Quick Prediction -->
                     <div class="card">
                         <div class="card-header">
-                            <h2 class="card-title">Prediksi Cepat</h2>
-                            <i class="ri-zap-line"></i>
+                            <h2 class="card-title">
+                                <i class="ri-zap-line"></i>
+                                Prediksi Cepat
+                            </h2>
                         </div>
                         <div class="quick-prediction">
-                            <p>Dapatkan prediksi instan untuk bulan depan berdasarkan data terbaru Anda.</p>
+                            <p>Dapatkan prediksi instan untuk bulan depan berdasarkan penggunaan listrik bulan ini.</p>
                             <div class="prediction-form">
                                 <div class="form-group">
-                                    <label for="quickKwh" class="form-label">Penggunaan Bulan Ini (kWh)</label>
-                                    <input type="number" id="quickKwh" class="form-input" placeholder="Masukkan kWh bulan ini">
+                                    <label for="quickKwh" class="form-label">
+                                        <i class="ri-flashlight-line"></i>
+                                        Penggunaan Bulan Ini (kWh)
+                                    </label>
+                                    <input 
+                                        type="number" 
+                                        id="quickKwh" 
+                                        class="form-input" 
+                                        placeholder="Contoh: 250"
+                                        min="0"
+                                        step="0.01"
+                                    >
                                 </div>
                                 <button onclick="quickPredict()" class="btn btn-primary">
                                     <i class="ri-artificial-intelligence-line"></i>
@@ -230,17 +242,22 @@
                     <!-- Recent Predictions -->
                     <div class="card">
                         <div class="card-header">
-                            <h2 class="card-title">Prediksi Terbaru</h2>
-                            <i class="ri-history-line"></i>
+                            <h2 class="card-title">
+                                <i class="ri-history-line"></i>
+                                Prediksi Terbaru
+                            </h2>
                         </div>
                         <div class="recent-predictions">
                             <div id="recentPredictionsList" class="predictions-list">
-                                <!-- Predictions will be loaded here -->
+                                <div class="no-predictions">
+                                    <i class="ri-inbox-line"></i>
+                                    <p>Memuat data prediksi...</p>
+                                </div>
                             </div>
                             <div class="card-actions">
                                 <a href="predict.html" class="btn btn-secondary">
                                     <i class="ri-eye-line"></i>
-                                    Lihat Semua
+                                    Lihat Semua Prediksi
                                 </a>
                             </div>
                         </div>
@@ -251,8 +268,10 @@
                     <!-- User Profile Summary -->
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title">Profil Singkat</h3>
-                            <i class="ri-user-line"></i>
+                            <h3 class="card-title">
+                                <i class="ri-user-line"></i>
+                                Profil Singkat
+                            </h3>
                         </div>
                         <div class="profile-summary">
                             <div class="profile-avatar">
@@ -261,7 +280,7 @@
                             <div class="profile-info">
                                 <h4 id="dashboardUserName">-</h4>
                                 <p id="dashboardUserEmail">-</p>
-                                <p class="user-golongan" id="dashboardUserGolongan">-</p>
+                                <span class="user-golongan" id="dashboardUserGolongan">-</span>
                             </div>
                             <div class="profile-stats">
                                 <div class="profile-stat">
@@ -279,8 +298,10 @@
                     <!-- Energy Saving Tips -->
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title">Tips Penghematan</h3>
-                            <i class="ri-lightbulb-flash-line"></i>
+                            <h3 class="card-title">
+                                <i class="ri-lightbulb-flash-line"></i>
+                                Tips Penghematan
+                            </h3>
                         </div>
                         <div class="tips-list">
                             <div class="tip-item">
@@ -325,12 +346,14 @@
                     <!-- Quick Actions -->
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title">Aksi Cepat</h3>
-                            <i class="ri-zap-line"></i>
+                            <h3 class="card-title">
+                                <i class="ri-zap-line"></i>
+                                Aksi Cepat
+                            </h3>
                         </div>
                         <div class="quick-actions">
                             <a href="predict.html" class="action-btn">
-                                <i class="ri-artificial-intelligence-line"></i>
+                                <i class="ri-robot-line"></i>
                                 <span>Buat Prediksi</span>
                             </a>
                             <a href="profile.html" class="action-btn">
@@ -353,8 +376,10 @@
             <!-- Monthly Comparison -->
             <div class="card">
                 <div class="card-header">
-                    <h2 class="card-title">Perbandingan Bulanan</h2>
-                    <i class="ri-bar-chart-line"></i>
+                    <h2 class="card-title">
+                        <i class="ri-bar-chart-line"></i>
+                        Perbandingan Bulanan
+                    </h2>
                 </div>
                 <div class="comparison-chart">
                     <div class="chart-placeholder">

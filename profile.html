@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/navbar.css">
     <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/profile.css">
     <script>
         (function() {
             function updateNavbar() {
@@ -123,158 +124,349 @@
     </nav>
 
     <!-- Profile Section -->
-    <section class="dashboard">
+    <section class="dashboard profile-page">
         <div class="container">
-            <div class="dashboard-header">
-                <h1 class="dashboard-title">Profil Pengguna</h1>
-                <p class="dashboard-subtitle">Kelola informasi akun dan preferensi Anda</p>
+            <!-- Profile Header Banner -->
+            <div class="profile-banner">
+                <div class="banner-decoration"></div>
+                <div class="profile-header-content">
+                    <div class="profile-avatar-large">
+                        <i class="ri-user-fill"></i>
+                        <div class="avatar-badge">
+                            <i class="ri-vip-crown-line"></i>
+                        </div>
+                    </div>
+                    <div class="profile-header-info">
+                        <h1 id="profileHeaderName" class="profile-name">Loading...</h1>
+                        <p id="profileHeaderEmail" class="profile-email">Loading...</p>
+                        <div class="profile-badges">
+                            <span class="badge badge-primary" id="profileHeaderGolongan">
+                                <i class="ri-flashlight-line"></i>
+                                Loading...
+                            </span>
+                            <span class="badge badge-success">
+                                <i class="ri-shield-check-line"></i>
+                                Terverifikasi
+                            </span>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <div class="dashboard-grid">
-                <div class="main-content">
-                    <!-- Profile Info -->
-                    <div class="card">
-                        <div class="card-header">
-                            <h2 class="card-title">Informasi Profil</h2>
-                            <i class="ri-user-line"></i>
+            <!-- Profile Stats Cards -->
+            <div class="profile-stats-grid">
+                <div class="profile-stat-card">
+                    <div class="stat-icon-wrapper">
+                        <i class="ri-history-line"></i>
+                    </div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="statsUserPredictions">0</div>
+                        <div class="stat-label">Total Prediksi</div>
+                    </div>
+                </div>
+                <div class="profile-stat-card">
+                    <div class="stat-icon-wrapper">
+                        <i class="ri-calendar-line"></i>
+                    </div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="statsJoinDate">-</div>
+                        <div class="stat-label">Bergabung Sejak</div>
+                    </div>
+                </div>
+                <div class="profile-stat-card">
+                    <div class="stat-icon-wrapper">
+                        <i class="ri-shield-check-line"></i>
+                    </div>
+                    <div class="stat-info">
+                        <div class="stat-value">Aktif</div>
+                        <div class="stat-label">Status Akun</div>
+                    </div>
+                </div>
+                <div class="profile-stat-card">
+                    <div class="stat-icon-wrapper">
+                        <i class="ri-line-chart-line"></i>
+                    </div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="statsActivity">100%</div>
+                        <div class="stat-label">Aktivitas</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Profile Content -->
+            <div class="profile-content-grid">
+                <div class="profile-main">
+                    <!-- Edit Profile Card -->
+                    <div class="profile-card">
+                        <div class="profile-card-header">
+                            <div class="card-header-left">
+                                <div class="card-icon">
+                                    <i class="ri-user-settings-line"></i>
+                                </div>
+                                <div>
+                                    <h2 class="card-title">Informasi Profil</h2>
+                                    <p class="card-subtitle">Kelola data pribadi Anda</p>
+                                </div>
+                            </div>
                         </div>
-                        <form id="profileForm">
-                            <div class="form-group">
-                                <label for="name" class="form-label">Nama Lengkap</label>
-                                <input type="text" id="name" name="name" class="form-input" required>
-                            </div>
+                        <div class="profile-card-body">
+                            <form id="profileForm" class="profile-form">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="name" class="form-label">
+                                            <i class="ri-user-line"></i>
+                                            Nama Lengkap
+                                        </label>
+                                        <input type="text" id="name" name="name" class="form-input" placeholder="Masukkan nama lengkap" required>
+                                    </div>
+                                </div>
 
-                            <div class="form-group">
-                                <label for="email" class="form-label">Email</label>
-                                <input type="email" id="email" name="email" class="form-input" disabled>
-                                <small class="form-help">Email tidak dapat diubah</small>
-                            </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="email" class="form-label">
+                                            <i class="ri-mail-line"></i>
+                                            Alamat Email
+                                        </label>
+                                        <input type="email" id="email" name="email" class="form-input" placeholder="email@example.com" disabled>
+                                        <small class="form-help">
+                                            <i class="ri-information-line"></i>
+                                            Email tidak dapat diubah untuk keamanan akun
+                                        </small>
+                                    </div>
+                                </div>
 
-                            <div class="form-group">
-                                <label for="golongan_pln" class="form-label">Golongan Tarif PLN</label>
-                                <select id="golongan_pln" name="golongan_pln" class="form-select" required>
-                                    <option value="R-1/900">R-1/900 VA</option>
-                                    <option value="R-1/1300">R-1/1300 VA</option>
-                                    <option value="R-1/2200">R-1/2200 VA</option>
-                                    <option value="R-2/3500">R-2/3500 VA</option>
-                                    <option value="R-3/5500">R-3/5500 VA</option>
-                                    <option value="B-2/6600">B-2/6600 VA</option>
-                                    <option value="I-3/14000">I-3/14000 VA</option>
-                                </select>
-                            </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="golongan_pln" class="form-label">
+                                            <i class="ri-flashlight-line"></i>
+                                            Golongan Tarif PLN
+                                        </label>
+                                        <select id="golongan_pln" name="golongan_pln" class="form-select" required>
+                                            <option value="" disabled selected>Pilih golongan tarif</option>
+                                            <option value="R-1/900">R-1/900 VA</option>
+                                            <option value="R-1/1300">R-1/1300 VA</option>
+                                            <option value="R-1/2200">R-1/2200 VA</option>
+                                            <option value="R-2/3500">R-2/3500 VA</option>
+                                            <option value="R-3/5500">R-3/5500 VA</option>
+                                            <option value="B-2/6600">B-2/6600 VA</option>
+                                            <option value="I-3/14000">I-3/14000 VA</option>
+                                        </select>
+                                        <small class="form-help">
+                                            <i class="ri-information-line"></i>
+                                            Pilih sesuai dengan daya listrik rumah Anda
+                                        </small>
+                                    </div>
+                                </div>
 
-                            <div class="form-group">
-                                <label class="form-label">Tanggal Bergabung</label>
-                                <input type="text" id="joinDate" class="form-input" disabled>
-                            </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label class="form-label">
+                                            <i class="ri-calendar-check-line"></i>
+                                            Tanggal Bergabung
+                                        </label>
+                                        <input type="text" id="joinDate" class="form-input" disabled>
+                                    </div>
+                                </div>
 
-                            <button type="submit" class="btn btn-primary">
-                                <i class="ri-save-line"></i>
-                                Simpan Perubahan
-                            </button>
-                        </form>
+                                <div class="form-actions">
+                                    <button type="submit" class="btn btn-primary btn-large">
+                                        <i class="ri-save-line"></i>
+                                        Simpan Perubahan
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
 
-                    <!-- Change Password -->
-                    <div class="card">
-                        <div class="card-header">
-                            <h2 class="card-title">Ubah Password</h2>
-                            <i class="ri-lock-line"></i>
+                    <!-- Change Password Card -->
+                    <div class="profile-card">
+                        <div class="profile-card-header">
+                            <div class="card-header-left">
+                                <div class="card-icon card-icon-warning">
+                                    <i class="ri-lock-password-line"></i>
+                                </div>
+                                <div>
+                                    <h2 class="card-title">Keamanan & Password</h2>
+                                    <p class="card-subtitle">Ubah password untuk menjaga keamanan akun</p>
+                                </div>
+                            </div>
                         </div>
-                        <form id="passwordForm">
-                            <div class="form-group">
-                                <label for="current_password" class="form-label">Password Saat Ini</label>
-                                <input type="password" id="current_password" name="current_password" class="form-input" required>
-                            </div>
+                        <div class="profile-card-body">
+                            <form id="passwordForm" class="profile-form">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="current_password" class="form-label">
+                                            <i class="ri-lock-line"></i>
+                                            Password Saat Ini
+                                        </label>
+                                        <div class="input-with-icon">
+                                            <input type="password" id="current_password" name="current_password" class="form-input" placeholder="Masukkan password saat ini" required>
+                                            <button type="button" class="toggle-password" onclick="togglePassword('current_password')">
+                                                <i class="ri-eye-line"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
 
-                            <div class="form-group">
-                                <label for="new_password" class="form-label">Password Baru</label>
-                                <input type="password" id="new_password" name="new_password" class="form-input" minlength="6" required>
-                                <small class="form-help">Minimal 6 karakter</small>
-                            </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="new_password" class="form-label">
+                                            <i class="ri-lock-unlock-line"></i>
+                                            Password Baru
+                                        </label>
+                                        <div class="input-with-icon">
+                                            <input type="password" id="new_password" name="new_password" class="form-input" placeholder="Masukkan password baru" minlength="6" required>
+                                            <button type="button" class="toggle-password" onclick="togglePassword('new_password')">
+                                                <i class="ri-eye-line"></i>
+                                            </button>
+                                        </div>
+                                        <small class="form-help">
+                                            <i class="ri-information-line"></i>
+                                            Minimal 6 karakter, gunakan kombinasi huruf dan angka
+                                        </small>
+                                    </div>
+                                </div>
 
-                            <div class="form-group">
-                                <label for="confirm_password" class="form-label">Konfirmasi Password Baru</label>
-                                <input type="password" id="confirm_password" name="confirm_password" class="form-input" minlength="6" required>
-                            </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="confirm_password" class="form-label">
+                                            <i class="ri-lock-2-line"></i>
+                                            Konfirmasi Password Baru
+                                        </label>
+                                        <div class="input-with-icon">
+                                            <input type="password" id="confirm_password" name="confirm_password" class="form-input" placeholder="Ketik ulang password baru" minlength="6" required>
+                                            <button type="button" class="toggle-password" onclick="togglePassword('confirm_password')">
+                                                <i class="ri-eye-line"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
 
-                            <button type="submit" class="btn btn-primary">
-                                <i class="ri-lock-password-line"></i>
-                                Ubah Password
-                            </button>
-                        </form>
+                                <div class="form-actions">
+                                    <button type="submit" class="btn btn-warning btn-large">
+                                        <i class="ri-shield-keyhole-line"></i>
+                                        Ubah Password
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                 </div>
 
-                <div class="sidebar">
-                    <!-- User Summary -->
-                    <div class="card">
-                        <div class="card-header">
-                            <h3 class="card-title">Ringkasan Akun</h3>
-                            <i class="ri-profile-line"></i>
-                        </div>
-                        <div class="user-summary">
-                            <div class="user-avatar">
-                                <i class="ri-user-fill"></i>
-                            </div>
-                            <div class="user-info">
-                                <h4 id="userName">-</h4>
-                                <p id="userEmail">-</p>
-                                <p class="user-golongan" id="userGolongan">-</p>
-                            </div>
-                            <div class="user-stats">
-                                <div class="user-stat">
-                                    <i class="ri-history-line"></i>
-                                    <span>Prediksi: <strong id="totalUserPredictions">0</strong></span>
+                <!-- Sidebar -->
+                <div class="profile-sidebar">
+                    <!-- Quick Actions -->
+                    <div class="profile-card">
+                        <div class="profile-card-header">
+                            <div class="card-header-left">
+                                <div class="card-icon card-icon-success">
+                                    <i class="ri-flashlight-line"></i>
                                 </div>
-                                <div class="user-stat">
-                                    <i class="ri-calendar-line"></i>
-                                    <span>Bergabung: <strong id="userJoinDate">-</strong></span>
+                                <div>
+                                    <h3 class="card-title">Aksi Cepat</h3>
                                 </div>
                             </div>
                         </div>
-                    </div>
-
-                    <!-- Account Actions -->
-                    <div class="card">
-                        <div class="card-header">
-                            <h3 class="card-title">Aksi Akun</h3>
-                            <i class="ri-settings-3-line"></i>
-                        </div>
-                        <div class="account-actions">
-                            <button class="btn btn-secondary btn-full" onclick="exportData()">
-                                <i class="ri-download-line"></i>
-                                Ekspor Data
-                            </button>
-                            <button class="btn btn-primary btn-full" id="logoutBtnProfile">
-                                <i class="ri-logout-box-line"></i>
-                                Logout
-                            </button>
-                            <button class="btn btn-danger btn-full" onclick="deleteAccount()">
-                                <i class="ri-delete-bin-line"></i>
-                                Hapus Akun
-                            </button>
+                        <div class="profile-card-body">
+                            <div class="quick-actions-list">
+                                <a href="dashboard.html" class="quick-action-item">
+                                    <div class="action-icon">
+                                        <i class="ri-dashboard-line"></i>
+                                    </div>
+                                    <div class="action-content">
+                                        <span class="action-title">Dashboard</span>
+                                        <span class="action-desc">Lihat ringkasan</span>
+                                    </div>
+                                    <i class="ri-arrow-right-s-line action-arrow"></i>
+                                </a>
+                                <a href="predict.html" class="quick-action-item">
+                                    <div class="action-icon">
+                                        <i class="ri-robot-line"></i>
+                                    </div>
+                                    <div class="action-content">
+                                        <span class="action-title">Prediksi</span>
+                                        <span class="action-desc">Buat prediksi baru</span>
+                                    </div>
+                                    <i class="ri-arrow-right-s-line action-arrow"></i>
+                                </a>
+                                <button onclick="exportData()" class="quick-action-item">
+                                    <div class="action-icon">
+                                        <i class="ri-download-cloud-line"></i>
+                                    </div>
+                                    <div class="action-content">
+                                        <span class="action-title">Ekspor Data</span>
+                                        <span class="action-desc">Unduh data Anda</span>
+                                    </div>
+                                    <i class="ri-arrow-right-s-line action-arrow"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
 
                     <!-- Security Tips -->
-                    <div class="card">
-                        <div class="card-header">
-                            <h3 class="card-title">Tips Keamanan</h3>
-                            <i class="ri-shield-check-line"></i>
+                    <div class="profile-card">
+                        <div class="profile-card-header">
+                            <div class="card-header-left">
+                                <div class="card-icon card-icon-info">
+                                    <i class="ri-shield-check-line"></i>
+                                </div>
+                                <div>
+                                    <h3 class="card-title">Tips Keamanan</h3>
+                                </div>
+                            </div>
                         </div>
-                        <div class="tips-list">
-                            <div class="tip-item">
-                                <i class="ri-key-line"></i>
-                                <span>Gunakan password yang kuat</span>
+                        <div class="profile-card-body">
+                            <div class="security-tips">
+                                <div class="security-tip-item">
+                                    <div class="tip-icon">
+                                        <i class="ri-key-2-line"></i>
+                                    </div>
+                                    <p>Gunakan password yang kuat dengan kombinasi huruf, angka, dan simbol</p>
+                                </div>
+                                <div class="security-tip-item">
+                                    <div class="tip-icon">
+                                        <i class="ri-time-line"></i>
+                                    </div>
+                                    <p>Ubah password secara berkala minimal 3 bulan sekali</p>
+                                </div>
+                                <div class="security-tip-item">
+                                    <div class="tip-icon">
+                                        <i class="ri-shield-keyhole-line"></i>
+                                    </div>
+                                    <p>Jangan bagikan informasi login Anda kepada siapapun</p>
+                                </div>
+                                <div class="security-tip-item">
+                                    <div class="tip-icon">
+                                        <i class="ri-logout-circle-line"></i>
+                                    </div>
+                                    <p>Selalu logout setelah menggunakan perangkat umum</p>
+                                </div>
                             </div>
-                            <div class="tip-item">
-                                <i class="ri-logout-box-line"></i>
-                                <span>Selalu logout dari perangkat lain</span>
+                        </div>
+                    </div>
+
+                    <!-- Danger Zone -->
+                    <div class="profile-card danger-zone">
+                        <div class="profile-card-header">
+                            <div class="card-header-left">
+                                <div class="card-icon card-icon-danger">
+                                    <i class="ri-error-warning-line"></i>
+                                </div>
+                                <div>
+                                    <h3 class="card-title">Zona Berbahaya</h3>
+                                </div>
                             </div>
-                            <div class="tip-item">
-                                <i class="ri-shield-keyhole-line"></i>
-                                <span>Jangan bagikan data login</span>
+                        </div>
+                        <div class="profile-card-body">
+                            <div class="danger-actions">
+                                <button class="btn btn-danger btn-full" id="logoutBtnProfile">
+                                    <i class="ri-logout-box-line"></i>
+                                    Logout dari Akun
+                                </button>
+                                <button class="btn btn-outline-danger btn-full" onclick="deleteAccount()">
+                                    <i class="ri-delete-bin-line"></i>
+                                    Hapus Akun Permanen
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -288,14 +480,33 @@
     <script src="js/user.js"></script>
     <script src="js/ui.js"></script>
     <script>
+        function togglePassword(inputId) {
+            const input = document.getElementById(inputId);
+            const button = input.parentElement.querySelector('.toggle-password i');
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                button.classList.remove('ri-eye-line');
+                button.classList.add('ri-eye-off-line');
+            } else {
+                input.type = 'password';
+                button.classList.remove('ri-eye-off-line');
+                button.classList.add('ri-eye-line');
+            }
+        }
+
         function exportData() {
-            // Implementation for data export
             alert('Fitur ekspor data akan segera hadir!');
         }
 
         function deleteAccount() {
-            if (confirm('Apakah Anda yakin ingin menghapus akun? Tindakan ini tidak dapat dibatalkan.')) {
-                alert('Fitur penghapusan akun akan segera hadir!');
+            if (confirm('⚠️ PERINGATAN!\n\nApakah Anda yakin ingin menghapus akun?\n\nSemua data Anda termasuk riwayat prediksi akan dihapus secara permanen dan tidak dapat dikembalikan.\n\nKetik "HAPUS" untuk melanjutkan.')) {
+                const confirmation = prompt('Ketik "HAPUS" untuk mengkonfirmasi:');
+                if (confirmation === 'HAPUS') {
+                    alert('Fitur penghapusan akun akan segera hadir!');
+                } else {
+                    alert('Penghapusan akun dibatalkan.');
+                }
             }
         }
 

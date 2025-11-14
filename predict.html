@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/navbar.css">
     <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/predict.css">
     <script>
         (function() {
             function updateNavbar() {
@@ -123,139 +124,236 @@
     </nav>
 
     <!-- Predict Section -->
-    <section class="dashboard">
+    <section class="dashboard predict-page">
         <div class="container">
-            <div class="dashboard-header">
-                <h1 class="dashboard-title">Prediksi Konsumsi Listrik</h1>
-                <p class="dashboard-subtitle">Gunakan AI untuk memprediksi penggunaan listrik bulan depan</p>
+            <!-- Page Header -->
+            <div class="predict-header">
+                <div class="header-content">
+                    <div class="header-icon">
+                        <i class="ri-robot-line"></i>
+                    </div>
+                    <div class="header-text">
+                        <h1 class="page-title">Prediksi Konsumsi Listrik</h1>
+                        <p class="page-subtitle">Gunakan teknologi AI untuk memprediksi penggunaan listrik Anda bulan depan dengan akurat</p>
+                    </div>
+                </div>
+                <div class="header-stats">
+                    <div class="stat-badge">
+                        <i class="ri-flashlight-fill"></i>
+                        <div>
+                            <span class="stat-number" id="avgConsumption">-</span>
+                            <span class="stat-text">Rata-rata kWh</span>
+                        </div>
+                    </div>
+                    <div class="stat-badge">
+                        <i class="ri-history-fill"></i>
+                        <div>
+                            <span class="stat-number" id="totalPredictions">0</span>
+                            <span class="stat-text">Total Prediksi</span>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <div class="dashboard-grid">
-                <div class="main-content">
-                    <!-- Prediction Form -->
-                    <div class="prediction-form">
-                        <h2 class="form-title">Form Prediksi</h2>
-                        <form id="predictForm">
-                            <div class="form-group">
-                                <label for="kwh_last_month" class="form-label">
-                                    <i class="ri-history-line"></i>
-                                    Penggunaan Bulan Lalu (kWh)
-                                </label>
-                                <input type="number" id="kwh_last_month" name="kwh_last_month" 
-                                       class="form-input" placeholder="Contoh: 120" min="1" step="0.01" required>
-                                <small class="form-help">Masukkan total kWh dari tagihan bulan sebelumnya</small>
+            <div class="predict-grid">
+                <!-- Main Prediction Form -->
+                <div class="predict-main">
+                    <div class="prediction-card">
+                        <div class="card-header-predict">
+                            <div class="card-header-left">
+                                <i class="ri-file-list-3-line"></i>
+                                <h2>Form Prediksi</h2>
                             </div>
-
-                            <div class="form-group">
-                                <label for="golongan_pln" class="form-label">
-                                    <i class="ri-flashlight-line"></i>
-                                    Golongan Tarif
-                                </label>
-                                <select id="golongan_pln" name="golongan_pln" class="form-select" required>
-                                    <option value="R-1/900">R-1/900 VA</option>
-                                    <option value="R-1/1300">R-1/1300 VA</option>
-                                    <option value="R-1/2200">R-1/2200 VA</option>
-                                    <option value="R-2/3500">R-2/3500 VA</option>
-                                    <option value="R-3/5500">R-3/5500 VA</option>
-                                    <option value="B-2/6600">B-2/6600 VA</option>
-                                    <option value="I-3/14000">I-3/14000 VA</option>
-                                </select>
+                            <div class="prediction-period">
+                                <span id="currentMonth">-</span>
+                                <i class="ri-arrow-right-line"></i>
+                                <span id="nextMonth">-</span>
                             </div>
+                        </div>
 
-                            <div class="form-group">
-                                <label class="form-label">
-                                    <i class="ri-calendar-line"></i>
-                                    Periode Prediksi
-                                </label>
-                                <div class="period-display">
-                                    <span id="currentMonth"></span> → <span id="nextMonth"></span>
+                        <form id="predictForm" class="predict-form">
+                            <div class="form-row">
+                                <div class="form-group-predict">
+                                    <label for="kwh_last_month" class="label-predict">
+                                        <i class="ri-history-line"></i>
+                                        <span>Penggunaan Bulan Lalu</span>
+                                    </label>
+                                    <div class="input-wrapper">
+                                        <input type="number" 
+                                               id="kwh_last_month" 
+                                               name="kwh_last_month" 
+                                               class="input-predict" 
+                                               placeholder="Masukkan jumlah kWh"
+                                               min="1" 
+                                               step="0.01" 
+                                               required>
+                                        <span class="input-unit">kWh</span>
+                                    </div>
+                                    <small class="input-help">
+                                        <i class="ri-information-line"></i>
+                                        Lihat tagihan listrik bulan sebelumnya
+                                    </small>
+                                </div>
+
+                                <div class="form-group-predict">
+                                    <label for="golongan_pln" class="label-predict">
+                                        <i class="ri-flashlight-line"></i>
+                                        <span>Golongan Tarif PLN</span>
+                                    </label>
+                                    <div class="select-wrapper">
+                                        <select id="golongan_pln" name="golongan_pln" class="select-predict" required>
+                                            <option value="">Pilih golongan tarif</option>
+                                            <option value="R-1/900">R-1/900 VA (Subsidi)</option>
+                                            <option value="R-1/1300">R-1/1300 VA (Subsidi)</option>
+                                            <option value="R-1/2200">R-1/2200 VA</option>
+                                            <option value="R-2/3500">R-2/3500 VA</option>
+                                            <option value="R-3/5500">R-3/5500 VA</option>
+                                            <option value="B-2/6600">B-2/6600 VA (Bisnis)</option>
+                                            <option value="I-3/14000">I-3/14000 VA (Industri)</option>
+                                        </select>
+                                        <i class="ri-arrow-down-s-line"></i>
+                                    </div>
+                                    <small class="input-help">
+                                        <i class="ri-information-line"></i>
+                                        Cek meteran atau tagihan listrik Anda
+                                    </small>
                                 </div>
                             </div>
 
-                            <button type="submit" class="btn btn-primary btn-full">
+                            <button type="submit" class="btn-predict-primary">
                                 <i class="ri-artificial-intelligence-line"></i>
-                                Prediksi Sekarang
+                                <span>Prediksi Sekarang</span>
+                                <i class="ri-arrow-right-line"></i>
                             </button>
                         </form>
                     </div>
 
                     <!-- Prediction Result -->
-                    <div id="predictionResult" class="prediction-result">
+                    <div id="predictionResult" class="prediction-result-card">
                         <!-- Result will be dynamically inserted here -->
                     </div>
 
                     <!-- Prediction History -->
-                    <div class="history-section">
-                        <h2 class="section-title">Riwayat Prediksi</h2>
-                        <div id="predictionHistory" class="history-grid">
+                    <div class="history-card">
+                        <div class="card-header-predict">
+                            <div class="card-header-left">
+                                <i class="ri-time-line"></i>
+                                <h2>Riwayat Prediksi</h2>
+                            </div>
+                            <button class="btn-refresh" onclick="loadPredictionHistory()">
+                                <i class="ri-refresh-line"></i>
+                                Refresh
+                            </button>
+                        </div>
+                        <div id="predictionHistory" class="history-list">
                             <!-- History will be dynamically loaded -->
+                            <div class="history-empty">
+                                <i class="ri-inbox-line"></i>
+                                <p>Belum ada riwayat prediksi</p>
+                                <small>Buat prediksi pertama Anda di atas</small>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="sidebar">
-                    <!-- Quick Stats -->
-                    <div class="card">
-                        <div class="card-header">
-                            <h3 class="card-title">Statistik Cepat</h3>
-                            <i class="ri-dashboard-line"></i>
+                <!-- Sidebar -->
+                <div class="predict-sidebar">
+                    <!-- Tips Card -->
+                    <div class="sidebar-card tips-card">
+                        <div class="sidebar-card-header">
+                            <i class="ri-lightbulb-flash-line"></i>
+                            <h3>Tips Hemat Energi</h3>
                         </div>
-                        <div class="stats-grid">
-                            <div class="stat-card">
-                                <div class="stat-value" id="avgConsumption">-</div>
-                                <div class="stat-label">Rata-rata kWh</div>
+                        <div class="tips-content">
+                            <div class="tip-item-predict">
+                                <div class="tip-number">1</div>
+                                <div class="tip-text">
+                                    <h4>Gunakan Timer Pintar</h4>
+                                    <p>Pasang timer otomatis untuk AC dan water heater</p>
+                                </div>
                             </div>
-                            <div class="stat-card">
-                                <div class="stat-value" id="totalPredictions">0</div>
-                                <div class="stat-label">Total Prediksi</div>
+                            <div class="tip-item-predict">
+                                <div class="tip-number">2</div>
+                                <div class="tip-text">
+                                    <h4>Maksimalkan Cahaya Alami</h4>
+                                    <p>Buka tirai dan jendela di siang hari</p>
+                                </div>
+                            </div>
+                            <div class="tip-item-predict">
+                                <div class="tip-number">3</div>
+                                <div class="tip-text">
+                                    <h4>Servis Berkala</h4>
+                                    <p>Rutin servis AC dan kulkas untuk efisiensi optimal</p>
+                                </div>
+                            </div>
+                            <div class="tip-item-predict">
+                                <div class="tip-number">4</div>
+                                <div class="tip-text">
+                                    <h4>Cabut Charger</h4>
+                                    <p>Lepas charger saat baterai penuh atau tidak digunakan</p>
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Tips Section -->
-                    <div class="card">
-                        <div class="card-header">
-                            <h3 class="card-title">Tips Penghematan</h3>
-                            <i class="ri-lightbulb-flash-line"></i>
+                    <!-- Info Card -->
+                    <div class="sidebar-card info-card">
+                        <div class="sidebar-card-header">
+                            <i class="ri-information-line"></i>
+                            <h3>Cara Kerja AI</h3>
                         </div>
-                        <div class="tips-list">
-                            <div class="tip-item">
-                                <i class="ri-timer-line"></i>
-                                <span>Gunakan timer untuk perangkat elektronik</span>
+                        <div class="info-content">
+                            <div class="info-step">
+                                <div class="step-icon">
+                                    <i class="ri-database-2-line"></i>
+                                </div>
+                                <div class="step-text">
+                                    <h4>Analisis Data</h4>
+                                    <p>Sistem menganalisis pola penggunaan historis Anda</p>
+                                </div>
                             </div>
-                            <div class="tip-item">
-                                <i class="ri-sun-line"></i>
-                                <span>Manfaatkan pencahayaan alami</span>
+                            <div class="info-step">
+                                <div class="step-icon">
+                                    <i class="ri-brain-line"></i>
+                                </div>
+                                <div class="step-text">
+                                    <h4>Machine Learning</h4>
+                                    <p>AI memproses data dengan algoritma canggih</p>
+                                </div>
                             </div>
-                            <div class="tip-item">
-                                <i class="ri-restart-line"></i>
-                                <span>Servis AC secara berkala</span>
-                            </div>
-                            <div class="tip-item">
-                                <i class="ri-plug-line"></i>
-                                <span>Cabut charger saat tidak digunakan</span>
+                            <div class="info-step">
+                                <div class="step-icon">
+                                    <i class="ri-line-chart-line"></i>
+                                </div>
+                                <div class="step-text">
+                                    <h4>Prediksi Akurat</h4>
+                                    <p>Hasil prediksi berdasarkan tren dan pola konsumsi</p>
+                                </div>
                             </div>
                         </div>
                     </div>
 
                     <!-- Quick Actions -->
-                    <div class="card">
-                        <div class="card-header">
-                            <h3 class="card-title">Aksi Cepat</h3>
-                            <i class="ri-zap-line"></i>
+                    <div class="sidebar-card actions-card">
+                        <div class="sidebar-card-header">
+                            <i class="ri-links-line"></i>
+                            <h3>Link Cepat</h3>
                         </div>
-                        <div class="quick-actions">
-                            <a href="dashboard.html" class="btn btn-secondary btn-full">
+                        <div class="quick-links">
+                            <a href="dashboard.html" class="quick-link">
                                 <i class="ri-dashboard-line"></i>
-                                Ke Dashboard
+                                <span>Dashboard</span>
+                                <i class="ri-arrow-right-s-line"></i>
                             </a>
-                            <a href="profile.html" class="btn btn-secondary btn-full">
-                                <i class="ri-user-line"></i>
-                                Edit Profil
-                            </a>
-                            <a href="tariff.html" class="btn btn-secondary btn-full">
+                            <a href="tariff.html" class="quick-link">
                                 <i class="ri-money-dollar-circle-line"></i>
-                                Lihat Tarif
+                                <span>Info Tarif</span>
+                                <i class="ri-arrow-right-s-line"></i>
+                            </a>
+                            <a href="profile.html" class="quick-link">
+                                <i class="ri-user-settings-line"></i>
+                                <span>Pengaturan</span>
+                                <i class="ri-arrow-right-s-line"></i>
                             </a>
                         </div>
                     </div>

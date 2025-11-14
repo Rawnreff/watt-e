@@ -86,9 +86,21 @@ class ApiClient {
 
     // Prediction endpoints
     async predictConsumption(predictionData) {
+        // CRITICAL FIX: Ensure kwh_last_month is sent as a number, not string
+        const sanitizedData = {
+            kwh_last_month: Number(predictionData.kwh_last_month)
+        };
+
+        // Validate the number
+        if (isNaN(sanitizedData.kwh_last_month) || sanitizedData.kwh_last_month <= 0) {
+            throw new Error('Nilai kWh tidak valid. Harap masukkan angka yang benar.');
+        }
+
+        console.log('Sending prediction data:', sanitizedData);
+
         return this.request('/predict/ai', {
             method: 'POST',
-            body: JSON.stringify(predictionData),
+            body: JSON.stringify(sanitizedData),
         });
     }
 

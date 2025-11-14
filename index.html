@@ -3,13 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Watt-E - Prediksi Konsumsi Listrik</title>
+    <title>Watt-E - Prediksi Konsumsi Listrik Cerdas dengan AI</title>
     <link href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/navbar.css">
-    <link rel="stylesheet" href="css/banner.css">
+    <link rel="stylesheet" href="css/home.css">
     <script>
-        // Quick navbar update to prevent flash - runs immediately
         (function() {
             function updateNavbar() {
                 const navMenu = document.getElementById('navMenu');
@@ -128,85 +127,289 @@
         </div>
     </nav>
 
-    <!-- Rest of your content remains the same -->
-    <section class="banner">
-        <div class="banner-container">
-            <div class="banner-content">
-                <h1 class="banner-title">
-                    <span class="title-main">Prediksi Konsumsi</span>
-                    <span class="title-accent">Listrik Anda</span>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-background">
+            <div class="gradient-orb orb-1"></div>
+            <div class="gradient-orb orb-2"></div>
+            <div class="gradient-orb orb-3"></div>
+        </div>
+        
+        <div class="hero-container">
+            <div class="hero-content">
+                <div class="hero-badge">
+                    <i class="ri-sparkle-line"></i>
+                    <span>AI-Powered Prediction</span>
+                </div>
+                
+                <h1 class="hero-title">
+                    <span class="title-line">Prediksi Konsumsi</span>
+                    <span class="title-line gradient-text">Listrik Cerdas</span>
+                    <span class="title-line">dengan AI</span>
                 </h1>
-                <p class="banner-description">
-                    Dengan teknologi AI terbaru, Watt-E membantu Anda memprediksi penggunaan listrik 
-                    dan mengoptimalkan pengeluaran bulanan.
+                
+                <p class="hero-description">
+                    Optimalkan penggunaan listrik rumah Anda dengan teknologi AI terdepan. 
+                    Dapatkan prediksi akurat dan hemat hingga 30% biaya listrik bulanan.
                 </p>
-                <div class="banner-stats">
-                    <div class="stat-item">
+                
+                <div class="hero-features">
+                    <div class="feature-chip">
                         <i class="ri-brain-line"></i>
-                        <span>AI Powered</span>
+                        <span>Gemini AI</span>
                     </div>
-                    <div class="stat-item">
+                    <div class="feature-chip">
                         <i class="ri-shield-check-line"></i>
-                        <span>Akurasi Tinggi</span>
+                        <span>95% Akurasi</span>
                     </div>
-                    <div class="stat-item">
-                        <i class="ri-money-dollar-circle-line"></i>
-                        <span>Hemat Biaya</span>
+                    <div class="feature-chip">
+                        <i class="ri-time-line"></i>
+                        <span>Real-time</span>
                     </div>
                 </div>
-                <div class="banner-actions">
-                    <a href="register.html" class="btn btn-primary" data-public-only>
-                        <i class="ri-rocket-line"></i>
-                        Mulai Sekarang
+                
+                <div class="hero-actions">
+                    <a href="register.html" class="btn-hero btn-primary" data-public-only>
+                        <span>Mulai Gratis</span>
+                        <i class="ri-arrow-right-line"></i>
                     </a>
-                    <a href="dashboard.html" class="btn btn-primary" data-auth-only style="display: none;">
-                        <i class="ri-dashboard-line"></i>
-                        Ke Dashboard
+                    <a href="dashboard.html" class="btn-hero btn-primary" data-auth-only style="display: none;">
+                        <span>Ke Dashboard</span>
+                        <i class="ri-arrow-right-line"></i>
                     </a>
-                    <a href="about.html" class="btn btn-secondary">
-                        <i class="ri-information-line"></i>
-                        Pelajari Lebih
+                    <a href="about.html" class="btn-hero btn-secondary">
+                        <span>Pelajari Lebih</span>
+                        <i class="ri-play-circle-line"></i>
                     </a>
                 </div>
             </div>
-            <div class="banner-visual">
-                <div class="energy-circle">
-                    <div class="circle-core">
-                        <i class="ri-flashlight-fill"></i>
+            
+            <div class="hero-visual">
+                <div class="energy-dashboard">
+                    <div class="dashboard-card card-1">
+                        <div class="card-icon">
+                            <i class="ri-flashlight-fill"></i>
+                        </div>
+                        <div class="card-content">
+                            <div class="card-label">Konsumsi Bulan Ini</div>
+                            <div class="card-value">245 kWh</div>
+                        </div>
+                        <div class="card-trend up">
+                            <i class="ri-arrow-up-line"></i>
+                            <span>12%</span>
+                        </div>
                     </div>
-                    <div class="circle-ring ring-1"></div>
-                    <div class="circle-ring ring-2"></div>
-                    <div class="circle-ring ring-3"></div>
+                    
+                    <div class="dashboard-card card-2">
+                        <div class="card-icon">
+                            <i class="ri-money-dollar-circle-fill"></i>
+                        </div>
+                        <div class="card-content">
+                            <div class="card-label">Estimasi Biaya</div>
+                            <div class="card-value">Rp 367K</div>
+                        </div>
+                        <div class="card-trend">
+                            <i class="ri-line-chart-line"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="dashboard-card card-3">
+                        <div class="card-icon">
+                            <i class="ri-leaf-fill"></i>
+                        </div>
+                        <div class="card-content">
+                            <div class="card-label">Hemat CO2</div>
+                            <div class="card-value">15.2 kg</div>
+                        </div>
+                        <div class="card-trend down">
+                            <i class="ri-arrow-down-line"></i>
+                            <span>8%</span>
+                        </div>
+                    </div>
+                    
+                    <div class="energy-circle">
+                        <div class="circle-progress">
+                            <svg viewBox="0 0 200 200">
+                                <circle cx="100" cy="100" r="90" class="circle-bg"></circle>
+                                <circle cx="100" cy="100" r="90" class="circle-fill"></circle>
+                            </svg>
+                            <div class="circle-content">
+                                <i class="ri-flashlight-fill"></i>
+                                <div class="circle-value">78%</div>
+                                <div class="circle-label">Efisiensi</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="scroll-indicator">
+            <div class="mouse">
+                <div class="wheel"></div>
+            </div>
+            <span>Scroll untuk jelajahi</span>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats-section">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <div class="stat-number" data-target="1500">0</div>
+                    <div class="stat-label">Pengguna Aktif</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number" data-target="95">0</div>
+                    <div class="stat-label">Tingkat Akurasi</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number" data-target="30">0</div>
+                    <div class="stat-label">Penghematan Rata-rata</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number" data-target="24">0</div>
+                    <div class="stat-label">Dukungan 24/7</div>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Features Section -->
-    <section class="features">
+    <section class="features-section">
         <div class="container">
-            <h2 class="section-title">Mengapa Memilih Watt-E?</h2>
+            <div class="section-header">
+                <span class="section-badge">Fitur Unggulan</span>
+                <h2 class="section-title">Mengapa Memilih Watt-E?</h2>
+                <p class="section-description">
+                    Platform prediksi listrik terlengkap dengan teknologi AI terdepan
+                </p>
+            </div>
+            
             <div class="features-grid">
                 <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="ri-robot-line"></i>
+                    <div class="feature-icon-wrapper">
+                        <div class="feature-icon">
+                            <i class="ri-robot-2-line"></i>
+                        </div>
                     </div>
-                    <h3>AI Prediction</h3>
-                    <p>Prediksi cerdas menggunakan Gemini AI untuk akurasi terbaik</p>
+                    <h3 class="feature-title">AI Prediction</h3>
+                    <p class="feature-description">
+                        Prediksi cerdas menggunakan Gemini AI untuk akurasi terbaik dalam memperkirakan konsumsi listrik
+                    </p>
+                    <a href="#" class="feature-link">
+                        <span>Pelajari lebih</span>
+                        <i class="ri-arrow-right-line"></i>
+                    </a>
                 </div>
+                
                 <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="ri-line-chart-line"></i>
+                    <div class="feature-icon-wrapper">
+                        <div class="feature-icon">
+                            <i class="ri-line-chart-line"></i>
+                        </div>
                     </div>
-                    <h3>Analisis Detail</h3>
-                    <p>Analisis pola konsumsi dan rekomendasi penghematan</p>
+                    <h3 class="feature-title">Analisis Real-time</h3>
+                    <p class="feature-description">
+                        Monitor dan analisis pola konsumsi listrik Anda secara real-time dengan visualisasi yang intuitif
+                    </p>
+                    <a href="#" class="feature-link">
+                        <span>Pelajari lebih</span>
+                        <i class="ri-arrow-right-line"></i>
+                    </a>
                 </div>
+                
                 <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="ri-user-line"></i>
+                    <div class="feature-icon-wrapper">
+                        <div class="feature-icon">
+                            <i class="ri-lightbulb-flash-line"></i>
+                        </div>
                     </div>
-                    <h3>Personalized</h3>
-                    <p>Rekomendasi yang disesuaikan dengan profil penggunaan Anda</p>
+                    <h3 class="feature-title">Smart Recommendations</h3>
+                    <p class="feature-description">
+                        Dapatkan rekomendasi penghematan yang dipersonalisasi berdasarkan pola penggunaan Anda
+                    </p>
+                    <a href="#" class="feature-link">
+                        <span>Pelajari lebih</span>
+                        <i class="ri-arrow-right-line"></i>
+                    </a>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon-wrapper">
+                        <div class="feature-icon">
+                            <i class="ri-shield-check-line"></i>
+                        </div>
+                    </div>
+                    <h3 class="feature-title">Secure & Private</h3>
+                    <p class="feature-description">
+                        Data Anda tersimpan dengan aman menggunakan enkripsi tingkat enterprise
+                    </p>
+                    <a href="#" class="feature-link">
+                        <span>Pelajari lebih</span>
+                        <i class="ri-arrow-right-line"></i>
+                    </a>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon-wrapper">
+                        <div class="feature-icon">
+                            <i class="ri-smartphone-line"></i>
+                        </div>
+                    </div>
+                    <h3 class="feature-title">Mobile Friendly</h3>
+                    <p class="feature-description">
+                        Akses dari mana saja, kapan saja melalui web responsif yang optimal di semua perangkat
+                    </p>
+                    <a href="#" class="feature-link">
+                        <span>Pelajari lebih</span>
+                        <i class="ri-arrow-right-line"></i>
+                    </a>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon-wrapper">
+                        <div class="feature-icon">
+                            <i class="ri-customer-service-2-line"></i>
+                        </div>
+                    </div>
+                    <h3 class="feature-title">24/7 Support</h3>
+                    <p class="feature-description">
+                        Tim support kami siap membantu Anda kapan saja untuk pengalaman terbaik
+                    </p>
+                    <a href="#" class="feature-link">
+                        <span>Pelajari lebih</span>
+                        <i class="ri-arrow-right-line"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container">
+            <div class="cta-content">
+                <div class="cta-icon">
+                    <i class="ri-rocket-2-line"></i>
+                </div>
+                <h2 class="cta-title">Siap Menghemat Listrik Anda?</h2>
+                <p class="cta-description">
+                    Bergabunglah dengan ribuan pengguna yang telah menghemat hingga 30% biaya listrik mereka
+                </p>
+                <div class="cta-actions">
+                    <a href="register.html" class="btn-cta btn-primary" data-public-only>
+                        <span>Daftar Gratis Sekarang</span>
+                        <i class="ri-arrow-right-line"></i>
+                    </a>
+                    <a href="dashboard.html" class="btn-cta btn-primary" data-auth-only style="display: none;">
+                        <span>Lihat Dashboard</span>
+                        <i class="ri-arrow-right-line"></i>
+                    </a>
+                    <a href="contact.html" class="btn-cta btn-outline">
+                        <span>Hubungi Kami</span>
+                    </a>
                 </div>
             </div>
         </div>
@@ -215,5 +418,6 @@
     <script src="js/api.js"></script>
     <script src="js/auth.js"></script>
     <script src="js/ui.js"></script>
+    <script src="js/home.js"></script>
 </body>
 </html>
