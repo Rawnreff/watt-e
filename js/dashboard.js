@@ -158,19 +158,36 @@ class DashboardManager {
         const totalPredictions = this.predictions.length;
         const latestPrediction = this.predictions[0];
         
+        // Helper: parse numeric value from strings like "1.444,70 kWh" or numbers
+        const parseNumericFromString = (input) => {
+            if (input === null || input === undefined) return 0;
+            const s = String(input);
+            // keep digits, dots and commas
+            let cleaned = s.replace(/[^0-9.,]/g, '');
+            if (!cleaned) return 0;
+            // If both '.' and ',' present assume '.' as thousand separator and ',' as decimal
+            if (cleaned.indexOf('.') > -1 && cleaned.indexOf(',') > -1) {
+                cleaned = cleaned.replace(/\./g, '').replace(',', '.');
+            } else if (cleaned.indexOf(',') > -1) {
+                // only comma present — treat as decimal separator
+                cleaned = cleaned.replace(/,/g, '.');
+            }
+            // remove any remaining thousand separators (commas)
+            cleaned = cleaned.replace(/,/g, '');
+            const num = parseFloat(cleaned);
+            return Number.isFinite(num) ? num : 0;
+        };
+
         // Extract kWh values
-        const kwhValues = this.predictions.map(p => {
-            const match = p.prediction.kwh_prediction.match(/[\d,]+/);
-            return match ? parseFloat(match[0].replace(',', '')) : 0;
-        });
+        const kwhValues = this.predictions.map(p => parseNumericFromString(p.prediction?.kwh_prediction));
 
         const avgKwh = kwhValues.reduce((a, b) => a + b, 0) / kwhValues.length;
         const maxKwh = Math.max(...kwhValues);
         const minKwh = Math.min(...kwhValues);
 
-        // Extract price values
-        const priceMatch = latestPrediction.prediction.price_prediction.match(/Rp\s*([\d,.]+)/);
-        const currentCost = priceMatch ? priceMatch[1] : '-';
+        // Extract price value (robust to number or formatted string)
+        const currentCostNum = parseNumericFromString(latestPrediction.prediction?.price_prediction);
+        const currentCost = currentCostNum ? currentCostNum.toLocaleString('id-ID') : '0';
 
         // Update current usage (from latest prediction input)
         this.updateElement('currentUsage', `${latestPrediction.kwh_last_month} kWh`);
