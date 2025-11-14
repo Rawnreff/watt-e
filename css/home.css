@@ -400,24 +400,15 @@
     color: #10b981;
 }
 
-/* Energy Circle */
+/* Energy Circle: moved to bottom-right and static (no continuous rotation) */
 .energy-circle {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 250px;
-    height: 250px;
-    animation: rotate-slow 20s linear infinite;
-}
-
-@keyframes rotate-slow {
-    from {
-        transform: translate(-50%, -50%) rotate(0deg);
-    }
-    to {
-        transform: translate(-50%, -50%) rotate(360deg);
-    }
+    bottom: 24px;
+    right: 24px;
+    width: 200px;
+    height: 200px;
+    transform: none;
+    z-index: 6;
 }
 
 .circle-progress {
@@ -461,27 +452,34 @@
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%) rotate(90deg);
+    transform: translate(-50%, -50%);
     text-align: center;
     color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px; /* tighten spacing between elements */
 }
 
 .circle-content i {
-    font-size: 2.5rem;
+    font-size: 2rem;
     color: #00c3ff;
-    margin-bottom: 0.5rem;
+    margin: 0;
     display: block;
 }
 
 .circle-value {
-    font-size: 2.5rem;
-    font-weight: 700;
-    margin-bottom: 0.25rem;
+    font-size: 2.1rem;
+    font-weight: 800;
+    margin: 0;
+    line-height: 1;
 }
 
 .circle-label {
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     color: #94a3b8;
+    margin-top: 0;
 }
 
 /* Scroll Indicator */

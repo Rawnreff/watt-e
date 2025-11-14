@@ -195,6 +195,31 @@
     flex-direction: column;
 }
 
+/* Enhanced visual card for each form group to improve readability */
+.form-group-predict {
+    background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+    padding: 1rem;
+    border-radius: 12px;
+    border: 1px solid #eef2f7;
+    box-shadow: 0 6px 18px rgba(2,6,23,0.04);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.form-group-predict:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 30px rgba(2,6,23,0.06);
+}
+
+.prediction-period, .prediction-months {
+    font-size: 0.9rem;
+    color: var(--text-dark);
+}
+
+.prediction-months {
+    margin-top: 0.5rem;
+    font-weight: 600;
+}
+
 .label-predict {
     display: flex;
     align-items: center;
@@ -213,6 +238,49 @@
 .input-wrapper,
 .select-wrapper {
     position: relative;
+}
+
+/* Month picker specific styling */
+.input-wrapper .month-icon {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.25rem;
+    color: var(--text-light);
+    pointer-events: auto;
+    cursor: pointer;
+    z-index: 3;
+}
+
+/* Style month input similarly to other inputs but leave space for our icon */
+.input-predict[type="month"] {
+    padding-right: 3.5rem; /* room for the icon */
+    font-family: inherit;
+    font-size: 1rem;
+    color: var(--text-dark);
+    font-weight: 600;
+}
+
+/* Hide native calendar picker icon in WebKit and show our icon instead */
+.input-predict[type="month"]::-webkit-calendar-picker-indicator {
+    /* hide default icon visually but keep its clickable area */
+    opacity: 0;
+}
+
+/* Firefox: remove default appearance to show our styles (limited control over native picker) */
+input[type="month"] {
+    appearance: textfield;
+    -moz-appearance: textfield;
+}
+
+/* Make the month-icon clickable area visually consistent on hover */
+.input-wrapper .month-icon {
+    transition: color 0.15s ease, transform 0.15s ease;
+}
+.input-wrapper .month-icon:hover {
+    color: var(--primary-blue);
+    transform: translateY(-50%) scale(1.05);
 }
 
 .input-predict {
@@ -475,6 +543,66 @@
 .history-list {
     padding: 2rem;
     min-height: 200px;
+}
+
+/* History item layout and selected state */
+.history-item {
+    display: flex;
+    gap: 1rem;
+    padding: 0.85rem 1rem;
+    border-radius: 10px;
+    align-items: flex-start;
+    border: 1px solid transparent;
+    transition: background 0.15s ease, border-color 0.15s ease, transform 0.08s ease;
+    margin-bottom: 0.75rem;
+}
+.history-item:hover {
+    transform: translateY(-2px);
+    background: linear-gradient(135deg, #fbfdff 0%, #ffffff 100%);
+    border-color: #edf2f7;
+}
+
+.history-number {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #eef2ff 0%, #e6f0ff 100%);
+    color: var(--primary-blue);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    flex-shrink: 0;
+    font-size: 0.95rem;
+    border: 2px solid transparent;
+}
+
+.history-content {
+    flex: 1;
+}
+
+.history-item .history-date {
+    font-size: 0.95rem;
+    color: var(--text-dark);
+    font-weight: 700;
+}
+.history-item .history-months,
+.history-item .history-kwh,
+.history-item .history-prediction {
+    font-size: 0.9rem;
+    color: var(--text-light);
+    margin-top: 0.25rem;
+}
+
+/* Selected state */
+.history-item.selected {
+    background: linear-gradient(90deg, rgba(59,130,246,0.06), rgba(59,130,246,0.03));
+    border-color: rgba(59,130,246,0.18);
+}
+.history-item.selected .history-number {
+    background: var(--primary-blue);
+    color: white;
+    border-color: rgba(59,130,246,0.25);
 }
 
 .history-empty {

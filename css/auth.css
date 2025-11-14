@@ -151,19 +151,21 @@
 }
 
 .feature-highlight {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
+    /* slightly lighter translucent background for better balance */
+    background: linear-gradient(180deg, rgba(0,0,0,0.18), rgba(0,0,0,0.14));
+    backdrop-filter: blur(8px);
     padding: 1.5rem;
     border-radius: var(--border-radius);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.10);
     color: var(--white);
     text-align: center;
+    box-shadow: 0 4px 12px rgba(2,6,23,0.12);
 }
 
 .feature-highlight i {
     font-size: 2rem;
     margin-bottom: 1rem;
-    color: var(--accent-color);
+    color: #9be6ff;
 }
 
 .feature-highlight h3 {

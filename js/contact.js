@@ -27,6 +27,55 @@ if (textarea) {
     });
 }
 
+// Auto-fill name and email for logged-in users
+function populateContactFromUser() {
+    try {
+        const raw = localStorage.getItem('watt_e_user');
+        let user = null;
+        if (raw) {
+            user = JSON.parse(raw);
+        } else {
+            // Only call API if we have an auth token — avoid triggering 401 when anonymous
+            const token = localStorage.getItem('watt_e_token');
+            if (token && typeof apiClient !== 'undefined' && apiClient.getCurrentUser) {
+                apiClient.getCurrentUser()?.then(r => {
+                    if (r && r.user) setContactFields(r.user);
+                }).catch(() => {});
+            }
+        }
+
+        if (user) {
+            setContactFields(user);
+        } else {
+            // no logged-in user detected — prefill anonymous email but keep it editable
+            const emailInput = document.getElementById('contactEmail');
+            if (emailInput) {
+                emailInput.value = 'anonymous@user.id';
+                emailInput.readOnly = false;
+                emailInput.removeAttribute('aria-readonly');
+                emailInput.classList.remove('readonly');
+            }
+        }
+    } catch (err) {
+        console.error('Failed to populate contact from user', err);
+    }
+}
+
+function setContactFields(user) {
+    const nameInput = document.getElementById('contactName');
+    const emailInput = document.getElementById('contactEmail');
+    if (nameInput && user.name) {
+        nameInput.value = user.name;
+    }
+    if (emailInput && user.email) {
+        emailInput.value = user.email;
+        // prevent editing email
+        emailInput.readOnly = true;
+        emailInput.setAttribute('aria-readonly', 'true');
+        emailInput.classList.add('readonly');
+    }
+}
+
 // Contact Form Submission
 document.getElementById('contactForm').addEventListener('submit', async function(e) {
     e.preventDefault();
@@ -75,8 +124,27 @@ document.getElementById('contactForm').addEventListener('submit', async function
         
         messageDiv.style.display = 'flex';
         
-        // Reset form
+        // Reset form but preserve auto-filled values (name/email) for logged-in users
         form.reset();
+        // restore auto-filled fields if present
+        try {
+            const raw = localStorage.getItem('watt_e_user');
+            if (raw) {
+                const user = JSON.parse(raw);
+                setContactFields(user);
+            } else {
+                // if no user in storage, restore anonymous email
+                const emailInput = document.getElementById('contactEmail');
+                if (emailInput) {
+                    emailInput.value = 'anonymous@user.id';
+                    emailInput.readOnly = false;
+                    emailInput.removeAttribute('aria-readonly');
+                    emailInput.classList.remove('readonly');
+                }
+            }
+        } catch (err) {
+            // ignore
+        }
         
         // Reset textarea height
         if (textarea) {
@@ -151,3 +219,10 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         }
     });
 });
+
+// Populate contact fields when page is ready
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', populateContactFromUser);
+} else {
+    populateContactFromUser();
+}

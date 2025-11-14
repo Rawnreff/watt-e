@@ -491,6 +491,56 @@
     box-shadow: 0 4px 15px rgba(30, 144, 255, 0.1);
 }
 
+/* Number badge for recent predictions */
+.prediction-number {
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #eef2ff 0%, #e0f2ff 100%);
+    color: var(--primary-blue);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.95rem;
+    margin-right: 1rem;
+    flex-shrink: 0;
+    box-shadow: 0 6px 18px rgba(16, 185, 129, 0.06);
+    border: 1px solid rgba(30,144,255,0.08);
+}
+
+/* Selected state styling for prediction items */
+.prediction-item.selected {
+    background: linear-gradient(135deg, #f0f9ff 0%, #e6f6ff 100%);
+    border-color: rgba(30,144,255,0.18);
+    transform: translateX(0);
+    box-shadow: 0 10px 30px rgba(14, 165, 233, 0.08);
+}
+
+.prediction-item.selected .prediction-number {
+    background: linear-gradient(135deg, var(--primary-blue) 0%, #0068d6 100%);
+    color: white;
+    box-shadow: 0 8px 20px rgba(2,6,23,0.12);
+    border: none;
+}
+
+/* Hover effect for number badge */
+.prediction-item:hover .prediction-number {
+    transform: translateX(2px);
+}
+
+/* Responsive: reduce badge size on small screens */
+@media (max-width: 600px) {
+    .prediction-number {
+        width: 36px;
+        height: 36px;
+        min-width: 36px;
+        font-size: 0.85rem;
+        border-radius: 8px;
+    }
+}
+
 .prediction-info {
     flex: 1;
 }

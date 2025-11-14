@@ -112,40 +112,96 @@ class DashboardManager {
 
         // Show only 5 most recent
         const recentPredictions = this.predictions.slice(0, 5);
-        
-        container.innerHTML = recentPredictions.map(pred => {
+
+        // helper to parse numeric values robustly
+        const parseNumericFromString = (input) => {
+            if (input === null || input === undefined) return 0;
+            const s = String(input);
+            let cleaned = s.replace(/[^0-9.,]/g, '');
+            if (!cleaned) return 0;
+            if (cleaned.indexOf('.') > -1 && cleaned.indexOf(',') > -1) {
+                cleaned = cleaned.replace(/\./g, '').replace(',', '.');
+            } else if (cleaned.indexOf(',') > -1) {
+                cleaned = cleaned.replace(/,/g, '.');
+            }
+            cleaned = cleaned.replace(/,/g, '');
+            const num = parseFloat(cleaned);
+            return Number.isFinite(num) ? num : 0;
+        };
+
+        container.innerHTML = recentPredictions.map((pred, idx) => {
             const date = new Date(pred.created_at);
-            const prediction = pred.prediction;
-            
+            const prediction = pred.prediction || {};
+
+            const inputKwh = parseNumericFromString(pred.kwh_last_month) || 0;
+            const predictedKwh = parseNumericFromString(prediction.kwh_prediction) || 0;
+
+            // resolve tariff: try stored pred.golongan_pln, prediction.golongan_pln, then current user
+            let tariffVal = 0;
+            if (pred.golongan_pln) tariffVal = parseNumericFromString(pred.golongan_pln);
+            if ((!tariffVal || tariffVal === 0) && prediction.golongan_pln) tariffVal = parseNumericFromString(prediction.golongan_pln);
+            if ((!tariffVal || tariffVal === 0) && this.currentUser && this.currentUser.golongan_pln) tariffVal = parseNumericFromString(this.currentUser.golongan_pln);
+
+            const apiPriceNum = parseNumericFromString(prediction.price_prediction) || 0;
+            let finalPriceNum = apiPriceNum;
+            if (tariffVal > 0 && predictedKwh > 0) {
+                const computed = predictedKwh * tariffVal;
+                if (!apiPriceNum || Math.abs((computed - apiPriceNum) / (apiPriceNum || computed)) > 0.02) {
+                    finalPriceNum = computed;
+                }
+            }
+
+            const formattedPrice = finalPriceNum ? `Rp ${finalPriceNum.toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}` : (prediction.price_prediction || '-');
+
+            const encodedFull = encodeURIComponent(JSON.stringify(pred));
+            const number = idx + 1;
             return `
-                <div class="prediction-item">
+                <div class="prediction-item" data-full='${encodedFull}'>
+                    <div class="prediction-number">${number}</div>
                     <div class="prediction-info">
                         <div class="prediction-date">
                             <i class="ri-calendar-line"></i>
-                            ${date.toLocaleDateString('id-ID', { 
-                                day: 'numeric', 
-                                month: 'short',
-                                year: 'numeric'
-                            })}
+                            ${date.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
                         </div>
+                        <div class="prediction-months">Bulan ini: <strong>${pred.month_current || '-'}</strong> &middot; Target: <strong>${pred.month_target || '-'}</strong></div>
                         <div class="prediction-details">
                             <span class="prediction-label">Input:</span>
-                            <strong>${pred.kwh_last_month} kWh</strong>
+                            <strong>${inputKwh} kWh</strong>
                         </div>
                     </div>
                     <div class="prediction-data">
                         <div class="prediction-kwh">
                             <i class="ri-flashlight-line"></i>
-                            ${prediction.kwh_prediction}
+                            ${predictedKwh} kWh
                         </div>
                         <div class="prediction-cost">
                             <i class="ri-money-dollar-circle-line"></i>
-                            ${prediction.price_prediction}
+                            ${formattedPrice}
                         </div>
                     </div>
                 </div>
             `;
         }).join('');
+
+        // attach click handlers so clicking a recent prediction opens predict page with that prediction
+        setTimeout(() => {
+            const items = container.querySelectorAll('.prediction-item');
+            items.forEach(item => {
+                item.style.cursor = 'pointer';
+                item.addEventListener('click', () => {
+                    const data = item.getAttribute('data-full');
+                    if (!data) return;
+                    try {
+                        const parsed = JSON.parse(decodeURIComponent(data));
+                        // store full prediction object in localStorage and navigate
+                        localStorage.setItem('selectedPrediction', JSON.stringify(parsed));
+                        window.location.href = 'predict.html';
+                    } catch (err) {
+                        console.error('Failed to parse prediction data', err);
+                    }
+                });
+            });
+        }, 0);
     }
 
     updateStats() {
@@ -311,12 +367,57 @@ class DashboardManager {
             this.showQuickResult('loading', 'Memprediksi...');
 
             // Make prediction - pastikan data dikirim sebagai number
+            const golonganToSend = this.currentUser?.golongan_pln || null;
+            // compute month_target as next month (YYYY-MM)
+            const now = new Date();
+            const nm = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+            const monthTarget = `${nm.getFullYear()}-${String(nm.getMonth() + 1).padStart(2, '0')}`;
+
             const result = await this.api.predictConsumption({
-                kwh_last_month: kwhValue // Kirim sebagai number, bukan string
+                kwh_last_month: kwhValue, // Kirim sebagai number, bukan string
+                golongan_pln: golonganToSend,
+                month_target: monthTarget
             });
 
             const prediction = result.prediction;
-            
+
+            // helper to parse numeric from various formats
+            const parseNumericFromString = (input) => {
+                if (input === null || input === undefined) return 0;
+                const s = String(input);
+                let cleaned = s.replace(/[^0-9.,]/g, '');
+                if (!cleaned) return 0;
+                if (cleaned.indexOf('.') > -1 && cleaned.indexOf(',') > -1) {
+                    cleaned = cleaned.replace(/\./g, '').replace(',', '.');
+                } else if (cleaned.indexOf(',') > -1) {
+                    cleaned = cleaned.replace(/,/g, '.');
+                }
+                cleaned = cleaned.replace(/,/g, '');
+                const num = parseFloat(cleaned);
+                return Number.isFinite(num) ? num : 0;
+            };
+
+            const predictedKwh = parseNumericFromString(prediction.kwh_prediction);
+            // get tariff numeric from current user if available
+            let tariffVal = parseNumericFromString(this.currentUser?.golongan_pln);
+            // also try reading from a select on page if present
+            const golSelect = document.getElementById('golongan_pln');
+            if (golSelect && golSelect.value) {
+                const t = parseNumericFromString(golSelect.value);
+                if (t) tariffVal = t;
+            }
+
+            const apiPriceNum = parseNumericFromString(prediction.price_prediction);
+            let finalPriceNum = apiPriceNum;
+            if (tariffVal && tariffVal > 0 && predictedKwh > 0) {
+                const computed = predictedKwh * tariffVal;
+                if (!apiPriceNum || Math.abs((computed - apiPriceNum) / (apiPriceNum || computed)) > 0.02) {
+                    finalPriceNum = computed;
+                }
+            }
+
+            const formattedPrice = finalPriceNum ? `Rp ${finalPriceNum.toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}` : prediction.price_prediction || '-';
+
             // Show success result
             this.showQuickResult('success', `
                 <div class="quick-result-header">
@@ -336,7 +437,7 @@ class DashboardManager {
                             <i class="ri-money-dollar-circle-line"></i>
                             Perkiraan Biaya:
                         </span>
-                        <strong>${prediction.price_prediction}</strong>
+                        <strong>${formattedPrice}</strong>
                     </div>
                     <div class="confidence-badge ${prediction.confidence_level.toLowerCase()}">
                         Confidence: ${prediction.confidence_level}

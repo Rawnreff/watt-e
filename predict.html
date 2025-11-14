@@ -237,6 +237,26 @@
                                         Cek meteran atau tagihan listrik Anda
                                     </small>
                                 </div>
+                                
+                                <div class="form-group-predict">
+                                    <label for="month_target" class="label-predict">
+                                        <i class="ri-calendar-event-line"></i>
+                                        <span>Bulan yang Diprediksi</span>
+                                    </label>
+                                    <div class="input-wrapper">
+                                         <input type="month"
+                                             id="month_target"
+                                             name="month_target"
+                                             class="input-predict"
+                                             placeholder="Pilih bulan"
+                                             required>
+                                         <i class="ri-calendar-event-line month-icon"></i>
+                                    </div>
+                                    <small class="input-help">
+                                        <i class="ri-information-line"></i>
+                                        Pilih bulan target prediksi (mis. 2025-12)
+                                    </small>
+                                </div>
                             </div>
 
                             <button type="submit" class="btn-predict-primary">
@@ -386,15 +406,67 @@
     <script src="js/predict.js"></script>
     <script src="js/ui.js"></script>
     <script>
-        // Set current and next month
+        // Set current and target month based on month_target input and keep it dynamic
         document.addEventListener('DOMContentLoaded', function() {
-            const now = new Date();
-            const currentMonth = now.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' });
-            const nextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
-            const nextMonthFormatted = nextMonth.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' });
+            const monthInput = document.getElementById('month_target');
 
-            document.getElementById('currentMonth').textContent = currentMonth;
-            document.getElementById('nextMonth').textContent = nextMonthFormatted;
+            // helper to format YYYY-MM -> localized Month Year
+            const formatMonthLabel = (ym) => {
+                try {
+                    const [y, m] = ym.split('-').map(Number);
+                    const date = new Date(y, m - 1, 1);
+                    return date.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' });
+                } catch (e) {
+                    return '-';
+                }
+            };
+
+            // Compute default month_target as next month if input empty
+            const now = new Date();
+            const defaultNext = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+            if (monthInput && !monthInput.value) {
+                const mm = String(defaultNext.getMonth() + 1).padStart(2, '0');
+                monthInput.value = `${defaultNext.getFullYear()}-${mm}`;
+            }
+
+            const updateMonths = () => {
+                const targetVal = monthInput?.value;
+                let targetDate;
+                if (targetVal) {
+                    const [y, m] = targetVal.split('-').map(Number);
+                    targetDate = new Date(y, (m || 1) - 1, 1);
+                } else {
+                    targetDate = defaultNext;
+                }
+
+                // compute current month as previous month relative to target
+                const curYear = targetDate.getMonth() === 0 ? targetDate.getFullYear() - 1 : targetDate.getFullYear();
+                const curMonth = targetDate.getMonth() === 0 ? 11 : targetDate.getMonth() - 1;
+                const currentDate = new Date(curYear, curMonth, 1);
+
+                document.getElementById('currentMonth').textContent = currentDate.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' });
+                document.getElementById('nextMonth').textContent = targetDate.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' });
+            };
+
+            // initial set
+            updateMonths();
+
+            // update when user changes the month picker
+            if (monthInput) {
+                monthInput.addEventListener('change', updateMonths);
+                // Make the calendar icon open the native picker when clicked (fallback to focus)
+                const monthIcon = document.querySelector('.month-icon');
+                if (monthIcon) {
+                    monthIcon.addEventListener('click', (ev) => {
+                        ev.preventDefault();
+                        if (typeof monthInput.showPicker === 'function') {
+                            try { monthInput.showPicker(); } catch(e) { monthInput.focus(); }
+                        } else {
+                            monthInput.focus();
+                        }
+                    });
+                }
+            }
         });
     </script>
 </body>

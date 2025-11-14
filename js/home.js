@@ -158,10 +158,11 @@ class HomeAnimations {
                 card.style.transform = `translate(${x}px, ${y}px)`;
             });
 
-            // Rotate energy circle
+            // Parallax move for energy circle (no continuous rotation)
             if (energyCircle) {
-                const rotation = xPos * 10;
-                energyCircle.style.transform = `translate(-50%, -50%) rotate(${rotation}deg)`;
+                const moveX = xPos * 8; // subtle horizontal movement
+                const moveY = yPos * 6; // subtle vertical movement
+                energyCircle.style.transform = `translate(${moveX}px, ${moveY}px)`;
             }
         });
 
@@ -171,7 +172,7 @@ class HomeAnimations {
                 card.style.transform = 'translate(0, 0)';
             });
             if (energyCircle) {
-                energyCircle.style.transform = 'translate(-50%, -50%) rotate(0deg)';
+                energyCircle.style.transform = 'none';
             }
         });
     }
@@ -305,6 +306,83 @@ function setupTypedEffect() {
 }
 
 // ========================================
+// ENERGY CIRCLE BEHAVIOR (no continuous rotation)
+// — percent will slowly and randomly increase between 75% and 90%
+// ========================================
+function setupEnergyCircleBehavior() {
+    // easing
+    function easeOutQuad(t){ return t*(2-t); }
+
+    const circleFill = document.querySelector('.circle-fill');
+    const circleValueEl = document.querySelector('.circle-value');
+    if (!circleFill || !circleValueEl) return;
+
+    // attempt to read r from the circle element; fallback to 90
+    const rAttr = circleFill.getAttribute('r') || circleFill.getAttribute('data-r');
+    const r = Number(rAttr) || 90;
+    const circumference = 2 * Math.PI * r;
+
+    // ensure stroke-dasharray matches circumference
+    circleFill.style.strokeDasharray = String(circumference);
+
+    // read initial pct from DOM (e.g., "78%")
+    const parsedInitial = parseFloat(String(circleValueEl.textContent).replace('%',''));
+    let currentPct = Number.isFinite(parsedInitial) ? parsedInitial : (75 + Math.random() * 15);
+    // enforce range 75-90 for the interactive display
+    currentPct = Math.max(75, Math.min(90, currentPct));
+
+    // set immediate offset without animation
+    function setOffset(p){
+        const offset = circumference * (1 - (p/100));
+        circleFill.style.transition = 'none';
+        circleFill.style.strokeDashoffset = String(offset);
+        circleValueEl.textContent = `${Math.round(p)}%`;
+    }
+    setOffset(currentPct);
+
+    function animateTo(target, duration = 1600){
+        target = Math.max(0, Math.min(100, target));
+        const start = currentPct;
+        const startTime = performance.now();
+        circleFill.style.transition = `stroke-dashoffset ${duration}ms ease-out`;
+
+        function frame(now){
+            const t = Math.min(1, (now - startTime) / duration);
+            const eased = easeOutQuad(t);
+            const value = start + (target - start) * eased;
+            const offset = circumference * (1 - (value/100));
+            circleFill.style.strokeDashoffset = String(offset);
+            circleValueEl.textContent = `${Math.round(value)}%`;
+            if (t < 1) requestAnimationFrame(frame);
+            else currentPct = target;
+        }
+        requestAnimationFrame(frame);
+    }
+
+    // schedule random fluctuations between 75% and 90% (can go up or down)
+    function scheduleNext(){
+        // much faster updates: 1s - 3.5s
+        const delay = 1000 + Math.random() * 2500;
+        setTimeout(() => {
+            // pick a random target within [75,90]
+            const min = 75;
+            const max = 90;
+            const target = Math.round((min + Math.random() * (max - min)) * 10) / 10;
+            // animate faster: 300-900ms
+            const dur = 300 + Math.random() * 600;
+            animateTo(target, dur);
+            scheduleNext();
+        }, delay);
+    }
+
+    // small initial nudge
+    if (Math.random() < 0.7) {
+        animateTo(Math.min(90, currentPct + Math.random()*2), 900);
+    }
+    scheduleNext();
+}
+
+// ========================================
 // INITIALIZE EVERYTHING
 // ========================================
 
@@ -317,6 +395,8 @@ document.addEventListener('DOMContentLoaded', () => {
     setupFeatureCardEffects();
     setupScrollProgress();
     animateDashboardCards();
+    // energy circle behavior (no continuous rotation)
+    setupEnergyCircleBehavior();
     
     // Optional: Uncomment if you want typing effect
     // setupTypedEffect();

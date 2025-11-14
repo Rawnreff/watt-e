@@ -91,6 +91,16 @@ class ApiClient {
             kwh_last_month: Number(predictionData.kwh_last_month)
         };
 
+        // Include golongan_pln if provided (may be code or numeric tarif)
+        if (predictionData.golongan_pln !== undefined) {
+            sanitizedData.golongan_pln = predictionData.golongan_pln;
+        }
+
+        // Include month_target if provided (format YYYY-MM)
+        if (predictionData.month_target !== undefined && predictionData.month_target !== null) {
+            sanitizedData.month_target = String(predictionData.month_target);
+        }
+
         // Validate the number
         if (isNaN(sanitizedData.kwh_last_month) || sanitizedData.kwh_last_month <= 0) {
             throw new Error('Nilai kWh tidak valid. Harap masukkan angka yang benar.');

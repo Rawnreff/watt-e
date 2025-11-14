@@ -118,6 +118,14 @@
     background: var(--white);
 }
 
+/* Readonly input visual hint */
+.form-input.readonly {
+    background: #f8fafc;
+    color: var(--text-dark);
+    cursor: not-allowed;
+    opacity: 0.95;
+}
+
 .form-input:focus,
 .form-textarea:focus {
     outline: none;
