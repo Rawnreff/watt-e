@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Watt-E</title>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/navbar.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <script>
+        (function() {
+            function updateNavbar() {
+                const navMenu = document.getElementById('navMenu');
+                if (!navMenu) return;
+                const token = localStorage.getItem('watt_e_token');
+                const savedUser = localStorage.getItem('watt_e_user');
+                const isLoggedIn = !!(token && savedUser);
+                if (isLoggedIn) {
+                    navMenu.classList.add('authenticated');
+                    const authLinks = navMenu.querySelectorAll('a[href="login.html"], a[href="register.html"]');
+                    authLinks.forEach(l => l.style.display = 'none');
+                    const dashboard = navMenu.querySelector('a[href="dashboard.html"]');
+                    const predict = navMenu.querySelector('a[href="predict.html"]');
+                    const profile = navMenu.querySelector('a[href="profile.html"]');
+                    if (dashboard) dashboard.style.display = 'flex';
+                    if (predict) predict.style.display = 'flex';
+                    if (profile) profile.style.display = 'none';
+                    let userMenu = navMenu.querySelector('.user-menu');
+                    if (!userMenu) {
+                        userMenu = document.createElement('a');
+                        userMenu.className = 'user-menu';
+                        userMenu.href = 'profile.html';
+                        navMenu.appendChild(userMenu);
+                    } else if (userMenu.tagName !== 'A') {
+                        const newMenu = document.createElement('a');
+                        newMenu.className = 'user-menu';
+                        newMenu.href = 'profile.html';
+                        newMenu.innerHTML = userMenu.innerHTML;
+                        userMenu.replaceWith(newMenu);
+                        userMenu = newMenu;
+                    } else {
+                        userMenu.href = 'profile.html';
+                    }
+                    try {
+                        const user = JSON.parse(savedUser);
+                        const name = user?.name?.split(' ')[0] || 'User';
+                        userMenu.innerHTML = '<div class="user-avatar"><i class="ri-user-line"></i></div><span>' + name + '</span>';
+                        if (window.location.pathname.split('/').pop() === 'profile.html') {
+                            userMenu.classList.add('active');
+                        }
+                    } catch(e) {
+                        userMenu.innerHTML = '<div class="user-avatar"><i class="ri-user-line"></i></div><span>User</span>';
+                    }
+                } else {
+                    navMenu.classList.remove('authenticated');
+                    const authLinks = navMenu.querySelectorAll('a[href="login.html"], a[href="register.html"]');
+                    authLinks.forEach(l => l.style.display = 'flex');
+                    const protectedLinks = navMenu.querySelectorAll('a[href="dashboard.html"], a[href="predict.html"], a[href="profile.html"]');
+                    protectedLinks.forEach(l => l.style.display = 'none');
+                    const userMenu = navMenu.querySelector('.user-menu');
+                    if (userMenu) userMenu.remove();
+                }
+            }
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', updateNavbar);
+            } else {
+                updateNavbar();
+            }
+        })();
+    </script>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="ri-flashlight-line"></i>
+                <span>Watt-E</span>
+            </div>
+            <div class="nav-menu" id="navMenu">
+                <a href="index.html" class="nav-link">
+                    <i class="ri-home-line"></i>
+                    Beranda
+                </a>
+                <a href="about.html" class="nav-link">
+                    <i class="ri-information-line"></i>
+                    Tentang
+                </a>
+                <a href="tariff.html" class="nav-link">
+                    <i class="ri-money-dollar-circle-line"></i>
+                    Tarif
+                </a>
+                <a href="contact.html" class="nav-link">
+                    <i class="ri-customer-service-line"></i>
+                    Kontak
+                </a>
+                <a href="dashboard.html" class="nav-link active">
+                    <i class="ri-dashboard-line"></i>
+                    Dashboard
+                </a>
+                <a href="predict.html" class="nav-link">
+                    <i class="ri-robot-line"></i>
+                    Prediksi
+                </a>
+                <a href="profile.html" class="nav-link">
+                    <i class="ri-user-line"></i>
+                    Profil
+                </a>
+                <a href="login.html" class="nav-link">
+                    <i class="ri-login-box-line"></i>
+                    Masuk
+                </a>
+                <a href="register.html" class="nav-link nav-button">
+                    <i class="ri-user-add-line"></i>
+                    Daftar
+                </a>
+            </div>
+            <div class="nav-toggle" id="navToggle">
+                <i class="ri-menu-line"></i>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Dashboard Section -->
+    <section class="dashboard">
+        <div class="container">
+            <!-- Welcome Section -->
+            <div class="welcome-section">
+                <div class="welcome-content">
+                    <h1 class="welcome-title">Selamat Datang, <span id="userGreeting">Pengguna</span>! 👋</h1>
+                    <p class="welcome-subtitle">Kelola dan pantau konsumsi listrik Anda dengan mudah</p>
+                </div>
+                <div class="welcome-actions">
+                    <a href="predict.html" class="btn btn-primary">
+                        <i class="ri-zap-line"></i>
+                        Buat Prediksi Baru
+                    </a>
+                    <button class="btn btn-secondary" onclick="refreshData()">
+                        <i class="ri-refresh-line"></i>
+                        Refresh Data
+                    </button>
+                </div>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="ri-flashlight-line"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-value" id="currentUsage">-</div>
+                        <div class="stat-label">Penggunaan Bulan Ini</div>
+                        <div class="stat-trend" id="usageTrend">
+                            <i class="ri-arrow-up-line"></i>
+                            <span>Loading...</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="ri-money-dollar-circle-line"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-value" id="currentCost">-</div>
+                        <div class="stat-label">Perkiraan Biaya</div>
+                        <div class="stat-trend" id="costTrend">
+                            <i class="ri-arrow-up-line"></i>
+                            <span>Loading...</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="ri-history-line"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-value" id="totalPredictions">0</div>
+                        <div class="stat-label">Total Prediksi</div>
+                        <div class="stat-trend positive">
+                            <i class="ri-line-chart-line"></i>
+                            <span>Histori tersedia</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="ri-trophy-line"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-value" id="efficiencyScore">-</div>
+                        <div class="stat-label">Skor Efisiensi</div>
+                        <div class="stat-trend" id="efficiencyTrend">
+                            <i class="ri-arrow-up-line"></i>
+                            <span>Loading...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content Grid -->
+            <div class="dashboard-grid">
+                <div class="main-content">
+                    <!-- Quick Prediction -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">Prediksi Cepat</h2>
+                            <i class="ri-zap-line"></i>
+                        </div>
+                        <div class="quick-prediction">
+                            <p>Dapatkan prediksi instan untuk bulan depan berdasarkan data terbaru Anda.</p>
+                            <div class="prediction-form">
+                                <div class="form-group">
+                                    <label for="quickKwh" class="form-label">Penggunaan Bulan Ini (kWh)</label>
+                                    <input type="number" id="quickKwh" class="form-input" placeholder="Masukkan kWh bulan ini">
+                                </div>
+                                <button onclick="quickPredict()" class="btn btn-primary">
+                                    <i class="ri-artificial-intelligence-line"></i>
+                                    Prediksi Sekarang
+                                </button>
+                            </div>
+                            <div id="quickResult" class="quick-result"></div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Predictions -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">Prediksi Terbaru</h2>
+                            <i class="ri-history-line"></i>
+                        </div>
+                        <div class="recent-predictions">
+                            <div id="recentPredictionsList" class="predictions-list">
+                                <!-- Predictions will be loaded here -->
+                            </div>
+                            <div class="card-actions">
+                                <a href="predict.html" class="btn btn-secondary">
+                                    <i class="ri-eye-line"></i>
+                                    Lihat Semua
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sidebar">
+                    <!-- User Profile Summary -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Profil Singkat</h3>
+                            <i class="ri-user-line"></i>
+                        </div>
+                        <div class="profile-summary">
+                            <div class="profile-avatar">
+                                <i class="ri-user-fill"></i>
+                            </div>
+                            <div class="profile-info">
+                                <h4 id="dashboardUserName">-</h4>
+                                <p id="dashboardUserEmail">-</p>
+                                <p class="user-golongan" id="dashboardUserGolongan">-</p>
+                            </div>
+                            <div class="profile-stats">
+                                <div class="profile-stat">
+                                    <i class="ri-calendar-line"></i>
+                                    <span>Bergabung: <strong id="dashboardJoinDate">-</strong></span>
+                                </div>
+                                <div class="profile-stat">
+                                    <i class="ri-flashlight-line"></i>
+                                    <span>Golongan: <strong id="dashboardTariff">-</strong></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Energy Saving Tips -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Tips Penghematan</h3>
+                            <i class="ri-lightbulb-flash-line"></i>
+                        </div>
+                        <div class="tips-list">
+                            <div class="tip-item">
+                                <div class="tip-icon">
+                                    <i class="ri-timer-line"></i>
+                                </div>
+                                <div class="tip-content">
+                                    <h4>Gunakan Timer</h4>
+                                    <p>Pasang timer untuk perangkat elektronik besar seperti AC dan water heater</p>
+                                </div>
+                            </div>
+                            <div class="tip-item">
+                                <div class="tip-icon">
+                                    <i class="ri-sun-line"></i>
+                                </div>
+                                <div class="tip-content">
+                                    <h4>Manfaatkan Cahaya Alami</h4>
+                                    <p>Buka tirai di siang hari untuk mengurangi penggunaan lampu</p>
+                                </div>
+                            </div>
+                            <div class="tip-item">
+                                <div class="tip-icon">
+                                    <i class="ri-restart-line"></i>
+                                </div>
+                                <div class="tip-content">
+                                    <h4>Servis Berkala</h4>
+                                    <p>Lakukan servis AC dan kulkas secara rutin untuk efisiensi optimal</p>
+                                </div>
+                            </div>
+                            <div class="tip-item">
+                                <div class="tip-icon">
+                                    <i class="ri-plug-line"></i>
+                                </div>
+                                <div class="tip-content">
+                                    <h4>Cabut Charger</h4>
+                                    <p>Cabut charger ponsel dan laptop saat tidak digunakan</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Aksi Cepat</h3>
+                            <i class="ri-zap-line"></i>
+                        </div>
+                        <div class="quick-actions">
+                            <a href="predict.html" class="action-btn">
+                                <i class="ri-artificial-intelligence-line"></i>
+                                <span>Buat Prediksi</span>
+                            </a>
+                            <a href="profile.html" class="action-btn">
+                                <i class="ri-user-line"></i>
+                                <span>Edit Profil</span>
+                            </a>
+                            <a href="tariff.html" class="action-btn">
+                                <i class="ri-money-dollar-circle-line"></i>
+                                <span>Lihat Tarif</span>
+                            </a>
+                            <a href="about.html" class="action-btn">
+                                <i class="ri-information-line"></i>
+                                <span>Tentang Kami</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Monthly Comparison -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Perbandingan Bulanan</h2>
+                    <i class="ri-bar-chart-line"></i>
+                </div>
+                <div class="comparison-chart">
+                    <div class="chart-placeholder">
+                        <i class="ri-bar-chart-horizontal-line"></i>
+                        <p>Grafik perbandingan penggunaan listrik bulanan</p>
+                        <small>Data akan tampil setelah Anda memiliki beberapa prediksi</small>
+                    </div>
+                    <div class="chart-stats">
+                        <div class="chart-stat">
+                            <div class="stat-value" id="avgMonthlyUsage">- kWh</div>
+                            <div class="stat-label">Rata-rata Bulanan</div>
+                        </div>
+                        <div class="chart-stat">
+                            <div class="stat-value" id="highestUsage">- kWh</div>
+                            <div class="stat-label">Tertinggi</div>
+                        </div>
+                        <div class="chart-stat">
+                            <div class="stat-value" id="lowestUsage">- kWh</div>
+                            <div class="stat-label">Terendah</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/dashboard.js"></script>
+    <script src="js/ui.js"></script>
+</body>
+</html>

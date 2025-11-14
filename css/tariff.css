@@ -1,0 +1,314 @@
+.tariff-hero {
+    background: linear-gradient(135deg, #1e90ff 0%, #00c3ff 50%, #00ffcc 100%);
+    padding: 150px 0 80px;
+    text-align: center;
+    color: var(--white);
+}
+
+.tariff-hero h1 {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.tariff-hero p {
+    font-size: 1.2rem;
+    opacity: 0.9;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.tariff-section {
+    padding: 80px 0;
+    background: var(--background);
+}
+
+.tariff-category {
+    margin-bottom: 4rem;
+}
+
+.category-title {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    color: var(--text-dark);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.category-title i {
+    color: var(--primary-blue);
+}
+
+.tariff-table-container {
+    background: var(--white);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+}
+
+.tariff-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.tariff-table th {
+    background: var(--primary-blue);
+    color: var(--white);
+    padding: 1rem;
+    text-align: left;
+    font-weight: 600;
+}
+
+.tariff-table td {
+    padding: 1rem;
+    border-bottom: 1px solid #e2e8f0;
+    color: var(--text-dark);
+}
+
+.tariff-table tr:last-child td {
+    border-bottom: none;
+}
+
+.tariff-table tr:nth-child(even) {
+    background: #f8fafc;
+}
+
+.tariff-table tr:hover {
+    background: #f1f5f9;
+}
+
+.calculator-section {
+    background: var(--white);
+    padding: 3rem;
+    border-radius: var(--border-radius-lg);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    margin: 4rem 0;
+    border: 1px solid rgba(30, 144, 255, 0.1);
+}
+
+.calculator-section .section-title {
+    margin-bottom: 2rem;
+    color: var(--text-dark);
+    font-size: 2rem;
+}
+
+.calculator-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    align-items: start;
+}
+
+.calculator-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    background: #f8fafc;
+    padding: 2rem;
+    border-radius: var(--border-radius);
+    border: 1px solid #e2e8f0;
+}
+
+.calculator-form .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.calculator-form .form-label {
+    font-weight: 600;
+    color: var(--text-dark);
+    font-size: 0.95rem;
+}
+
+.calculator-form .form-select,
+.calculator-form .form-input {
+    padding: 0.75rem 1rem;
+    border: 2px solid #e2e8f0;
+    border-radius: var(--border-radius);
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: var(--white);
+}
+
+.calculator-form .form-select:focus,
+.calculator-form .form-input:focus {
+    outline: none;
+    border-color: var(--primary-blue);
+    box-shadow: 0 0 0 3px rgba(30, 144, 255, 0.1);
+}
+
+.calculator-form .form-input.error {
+    border-color: #ef4444;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+.calculator-form .btn-primary {
+    margin-top: 0.5rem;
+    padding: 0.875rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.calculator-result {
+    display: flex;
+    justify-content: center;
+    align-items: start;
+}
+
+.result-card {
+    background: var(--gradient-primary);
+    color: var(--white);
+    padding: 2.5rem;
+    border-radius: var(--border-radius-lg);
+    width: 100%;
+    max-width: 350px;
+    box-shadow: 0 8px 24px rgba(30, 144, 255, 0.3);
+    position: sticky;
+    top: 100px;
+}
+
+.result-card h3 {
+    margin-bottom: 1.5rem;
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: 700;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.result-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+.result-item:last-child {
+    border-bottom: none;
+}
+
+.result-item span {
+    font-size: 0.95rem;
+    opacity: 0.95;
+}
+
+.result-item strong {
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.result-item.total {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-top: 1rem;
+    padding-top: 1.5rem;
+    border-top: 2px solid rgba(255, 255, 255, 0.4);
+}
+
+.result-item.total span {
+    font-size: 1.2rem;
+}
+
+.result-item.total strong {
+    font-size: 1.5rem;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.result-note {
+    font-size: 0.85rem;
+    opacity: 0.9;
+    margin-top: 1.5rem;
+    text-align: center;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    font-style: italic;
+}
+
+.notes-section {
+    margin-top: 4rem;
+}
+
+.notes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+.note-card {
+    background: var(--white);
+    padding: 2rem;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    text-align: center;
+    border-top: 4px solid var(--primary-blue);
+}
+
+.note-card i {
+    font-size: 2.5rem;
+    color: var(--primary-blue);
+    margin-bottom: 1rem;
+}
+
+.note-card h3 {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+    color: var(--text-dark);
+}
+
+.note-card p {
+    color: var(--text-light);
+    line-height: 1.6;
+}
+
+/* Responsive */
+@media (max-width: 968px) {
+    .calculator-grid {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+    
+    .calculator-section {
+        padding: 2rem;
+    }
+    
+    .tariff-hero h1 {
+        font-size: 2.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .tariff-table {
+        display: block;
+        overflow-x: auto;
+    }
+    
+    .tariff-table th,
+    .tariff-table td {
+        white-space: nowrap;
+        padding: 0.75rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .tariff-hero {
+        padding: 120px 0 60px;
+    }
+    
+    .tariff-hero h1 {
+        font-size: 2rem;
+    }
+    
+    .category-title {
+        font-size: 1.5rem;
+    }
+    
+    .calculator-section {
+        padding: 1.5rem;
+        margin: 2rem 0;
+    }
+    
+    .notes-grid {
+        grid-template-columns: 1fr;
+    }
+}

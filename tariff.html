@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tarif PLN - Watt-E</title>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/navbar.css">
+    <link rel="stylesheet" href="css/tariff.css">
+    <script>
+        (function() {
+            function updateNavbar() {
+                const navMenu = document.getElementById('navMenu');
+                if (!navMenu) return;
+                const token = localStorage.getItem('watt_e_token');
+                const savedUser = localStorage.getItem('watt_e_user');
+                const isLoggedIn = !!(token && savedUser);
+                if (isLoggedIn) {
+                    navMenu.classList.add('authenticated');
+                    const authLinks = navMenu.querySelectorAll('a[href="login.html"], a[href="register.html"]');
+                    authLinks.forEach(l => l.style.display = 'none');
+                    const dashboard = navMenu.querySelector('a[href="dashboard.html"]');
+                    const predict = navMenu.querySelector('a[href="predict.html"]');
+                    const profile = navMenu.querySelector('a[href="profile.html"]');
+                    if (dashboard) dashboard.style.display = 'flex';
+                    if (predict) predict.style.display = 'flex';
+                    if (profile) profile.style.display = 'none';
+                    let userMenu = navMenu.querySelector('.user-menu');
+                    if (!userMenu) {
+                        userMenu = document.createElement('a');
+                        userMenu.className = 'user-menu';
+                        userMenu.href = 'profile.html';
+                        navMenu.appendChild(userMenu);
+                    } else if (userMenu.tagName !== 'A') {
+                        const newMenu = document.createElement('a');
+                        newMenu.className = 'user-menu';
+                        newMenu.href = 'profile.html';
+                        newMenu.innerHTML = userMenu.innerHTML;
+                        userMenu.replaceWith(newMenu);
+                        userMenu = newMenu;
+                    } else {
+                        userMenu.href = 'profile.html';
+                    }
+                    try {
+                        const user = JSON.parse(savedUser);
+                        const name = user?.name?.split(' ')[0] || 'User';
+                        userMenu.innerHTML = '<div class="user-avatar"><i class="ri-user-line"></i></div><span>' + name + '</span>';
+                        if (window.location.pathname.split('/').pop() === 'profile.html') {
+                            userMenu.classList.add('active');
+                        }
+                    } catch(e) {
+                        userMenu.innerHTML = '<div class="user-avatar"><i class="ri-user-line"></i></div><span>User</span>';
+                    }
+                } else {
+                    navMenu.classList.remove('authenticated');
+                    const authLinks = navMenu.querySelectorAll('a[href="login.html"], a[href="register.html"]');
+                    authLinks.forEach(l => l.style.display = 'flex');
+                    const protectedLinks = navMenu.querySelectorAll('a[href="dashboard.html"], a[href="predict.html"], a[href="profile.html"]');
+                    protectedLinks.forEach(l => l.style.display = 'none');
+                    const userMenu = navMenu.querySelector('.user-menu');
+                    if (userMenu) userMenu.remove();
+                }
+            }
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', updateNavbar);
+            } else {
+                updateNavbar();
+            }
+        })();
+    </script>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="ri-flashlight-line"></i>
+                <span>Watt-E</span>
+            </div>
+            <div class="nav-menu" id="navMenu">
+                <a href="index.html" class="nav-link">
+                    <i class="ri-home-line"></i>
+                    Beranda
+                </a>
+                <a href="about.html" class="nav-link">
+                    <i class="ri-information-line"></i>
+                    Tentang
+                </a>
+                <a href="tariff.html" class="nav-link active">
+                    <i class="ri-money-dollar-circle-line"></i>
+                    Tarif
+                </a>
+                <a href="contact.html" class="nav-link">
+                    <i class="ri-customer-service-line"></i>
+                    Kontak
+                </a>
+                <a href="dashboard.html" class="nav-link">
+                    <i class="ri-dashboard-line"></i>
+                    Dashboard
+                </a>
+                <a href="predict.html" class="nav-link">
+                    <i class="ri-robot-line"></i>
+                    Prediksi
+                </a>
+                <a href="profile.html" class="nav-link">
+                    <i class="ri-user-line"></i>
+                    Profil
+                </a>
+                <a href="login.html" class="nav-link">
+                    <i class="ri-login-box-line"></i>
+                    Masuk
+                </a>
+                <a href="register.html" class="nav-link nav-button">
+                    <i class="ri-user-add-line"></i>
+                    Daftar
+                </a>
+            </div>
+            <div class="nav-toggle" id="navToggle">
+                <i class="ri-menu-line"></i>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Tariff Hero -->
+    <section class="tariff-hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>Tarif Listrik PLN</h1>
+                <p>Informasi terbaru tentang tarif tenaga listrik per 1 Januari 2024</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tariff Section -->
+    <section class="tariff-section">
+        <div class="container">
+            <!-- Residential Tariffs -->
+            <div class="tariff-category">
+                <h2 class="category-title">
+                    <i class="ri-home-line"></i>
+                    Golongan Rumah Tangga
+                </h2>
+                <div class="tariff-table-container">
+                    <table class="tariff-table">
+                        <thead>
+                            <tr>
+                                <th>Golongan Tarif</th>
+                                <th>Daya</th>
+                                <th>Rp/kWh</th>
+                                <th>Biaya Admin</th>
+                                <th>Keterangan</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>R-1</td>
+                                <td>900 VA</td>
+                                <td>1.352</td>
+                                <td>3.000</td>
+                                <td>Subsidi</td>
+                            </tr>
+                            <tr>
+                                <td>R-1</td>
+                                <td>1.300 VA</td>
+                                <td>1.444,70</td>
+                                <td>3.000</td>
+                                <td>Non-Subsidi</td>
+                            </tr>
+                            <tr>
+                                <td>R-1</td>
+                                <td>2.200 VA</td>
+                                <td>1.444,70</td>
+                                <td>3.000</td>
+                                <td>Non-Subsidi</td>
+                            </tr>
+                            <tr>
+                                <td>R-2</td>
+                                <td>3.500 - 5.500 VA</td>
+                                <td>1.699,53</td>
+                                <td>3.000</td>
+                                <td>Non-Subsidi</td>
+                            </tr>
+                            <tr>
+                                <td>R-3</td>
+                                <td>6.600 VA ke atas</td>
+                                <td>1.699,53</td>
+                                <td>3.000</td>
+                                <td>Non-Subsidi</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Business Tariffs -->
+            <div class="tariff-category">
+                <h2 class="category-title">
+                    <i class="ri-building-line"></i>
+                    Golongan Bisnis
+                </h2>
+                <div class="tariff-table-container">
+                    <table class="tariff-table">
+                        <thead>
+                            <tr>
+                                <th>Golongan Tarif</th>
+                                <th>Daya</th>
+                                <th>Rp/kWh</th>
+                                <th>Biaya Admin</th>
+                                <th>Keterangan</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>B-1</td>
+                                <td>900 - 5.500 VA</td>
+                                <td>1.444,70</td>
+                                <td>3.000</td>
+                                <td>Usaha Kecil</td>
+                            </tr>
+                            <tr>
+                                <td>B-2</td>
+                                <td>6.600 - 200 kVA</td>
+                                <td>1.444,70</td>
+                                <td>3.000</td>
+                                <td>Usaha Menengah</td>
+                            </tr>
+                            <tr>
+                                <td>B-3</td>
+                                <td>> 200 kVA</td>
+                                <td>1.444,70</td>
+                                <td>11.000</td>
+                                <td>Usaha Besar</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Industrial Tariffs -->
+            <div class="tariff-category">
+                <h2 class="category-title">
+                    <i class="ri-factory-line"></i>
+                    Golongan Industri
+                </h2>
+                <div class="tariff-table-container">
+                    <table class="tariff-table">
+                        <thead>
+                            <tr>
+                                <th>Golongan Tarif</th>
+                                <th>Daya</th>
+                                <th>Rp/kWh</th>
+                                <th>Biaya Admin</th>
+                                <th>Keterangan</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>I-1</td>
+                                <td>900 - 5.500 VA</td>
+                                <td>1.444,70</td>
+                                <td>3.000</td>
+                                <td>Industri Kecil</td>
+                            </tr>
+                            <tr>
+                                <td>I-2</td>
+                                <td>6.600 - 200 kVA</td>
+                                <td>1.444,70</td>
+                                <td>3.000</td>
+                                <td>Industri Menengah</td>
+                            </tr>
+                            <tr>
+                                <td>I-3</td>
+                                <td>> 200 kVA</td>
+                                <td>1.444,70</td>
+                                <td>11.000</td>
+                                <td>Industri Besar</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Calculator Section -->
+            <div class="calculator-section">
+                <h2 class="section-title">Kalkulator Biaya Listrik</h2>
+                <div class="calculator-grid">
+                    <div class="calculator-form">
+                        <div class="form-group">
+                            <label for="calcGolongan" class="form-label">Golongan Tarif</label>
+                            <select id="calcGolongan" class="form-select">
+                                <option value="1352">R-1/900 VA (Subsidi)</option>
+                                <option value="1444.70">R-1/1300 VA</option>
+                                <option value="1444.70">R-1/2200 VA</option>
+                                <option value="1699.53">R-2/3500 VA</option>
+                                <option value="1699.53">R-3/5500 VA</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="calcKwh" class="form-label">Pemakaian (kWh)</label>
+                            <input type="number" id="calcKwh" class="form-input" placeholder="Masukkan jumlah kWh" min="1">
+                        </div>
+                        <button onclick="calculateCost()" class="btn btn-primary btn-full">
+                            <i class="ri-calculator-line"></i>
+                            Hitung Biaya
+                        </button>
+                    </div>
+                    <div class="calculator-result">
+                        <div class="result-card">
+                            <h3>Hasil Perhitungan</h3>
+                            <div class="result-item">
+                                <span>Pemakaian:</span>
+                                <strong id="resultKwh">- kWh</strong>
+                            </div>
+                            <div class="result-item">
+                                <span>Tarif:</span>
+                                <strong id="resultTariff">Rp -/kWh</strong>
+                            </div>
+                            <div class="result-item total">
+                                <span>Total Biaya:</span>
+                                <strong id="resultTotal">Rp 0</strong>
+                            </div>
+                            <div class="result-note">
+                                *Termasuk biaya admin Rp 3.000
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Important Notes -->
+            <div class="notes-section">
+                <h2 class="section-title">Catatan Penting</h2>
+                <div class="notes-grid">
+                    <div class="note-card">
+                        <i class="ri-information-line"></i>
+                        <h3>Tarif Subsidi</h3>
+                        <p>Tarif R-1/900 VA merupakan tarif bersubsidi dari pemerintah untuk masyarakat berpenghasilan rendah.</p>
+                    </div>
+                    <div class="note-card">
+                        <i class="ri-alert-line"></i>
+                        <h3>Biaya Admin</h3>
+                        <p>Biaya admin dikenakan sekali per bulan terlepas dari pemakaian listrik.</p>
+                    </div>
+                    <div class="note-card">
+                        <i class="ri-calendar-line"></i>
+                        <h3>Periode Tagihan</h3>
+                        <p>Tagihan listrik dihitung berdasarkan periode 30 hari dan dapat bervariasi tergantung jumlah hari dalam bulan.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/ui.js"></script>
+    <script>
+        function calculateCost() {
+            const golongan = document.getElementById('calcGolongan');
+            const kwhInput = document.getElementById('calcKwh');
+            const kwh = kwhInput.value;
+            const tarif = parseFloat(golongan.value);
+            
+            // Validasi hanya saat tombol diklik
+            if (!kwh || kwh < 1) {
+                kwhInput.classList.add('error');
+                kwhInput.focus();
+                return;
+            }
+
+            // Hapus error class jika valid
+            kwhInput.classList.remove('error');
+
+            const biayaListrik = parseFloat(kwh) * tarif;
+            const biayaAdmin = 3000;
+            const total = biayaListrik + biayaAdmin;
+
+            document.getElementById('resultKwh').textContent = parseFloat(kwh).toLocaleString('id-ID') + ' kWh';
+            document.getElementById('resultTariff').textContent = 'Rp ' + tarif.toLocaleString('id-ID', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + '/kWh';
+            document.getElementById('resultTotal').textContent = 'Rp ' + total.toLocaleString('id-ID', {minimumFractionDigits: 0, maximumFractionDigits: 0});
+        }
+
+        // Hapus error state saat user mulai mengetik
+        document.getElementById('calcKwh').addEventListener('input', function() {
+            this.classList.remove('error');
+        });
+    </script>
+</body>
+</html>

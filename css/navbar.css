@@ -1,0 +1,231 @@
+/* Reset dan Base Styles untuk Navbar */
+.navbar {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(30, 144, 255, 0.1);
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+    transition: all 0.3s ease;
+}
+
+.nav-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 70px;
+}
+
+.nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary-blue);
+    text-decoration: none;
+}
+
+.nav-logo i {
+    font-size: 2rem;
+}
+
+.nav-menu {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    list-style: none;
+}
+
+/* Reduced gap when user is logged in */
+.nav-menu.authenticated {
+    gap: 0.75rem;
+}
+
+.nav-link {
+    text-decoration: none;
+    color: var(--text-dark);
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    border-radius: var(--border-radius);
+    transition: all 0.3s ease;
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.nav-link:hover {
+    color: var(--primary-blue);
+    background: rgba(30, 144, 255, 0.1);
+}
+
+.nav-link.active {
+    color: var(--primary-blue);
+    background: rgba(30, 144, 255, 0.1);
+}
+
+.nav-link.active::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 1rem;
+    right: 1rem;
+    height: 2px;
+    background: var(--gradient-primary);
+    border-radius: 2px;
+}
+
+.nav-button {
+    background: var(--gradient-primary) !important;
+    color: var(--white) !important;
+    padding: 0.5rem 1.5rem;
+}
+
+.nav-button:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow);
+    background: var(--gradient-primary) !important;
+}
+
+.nav-button.active {
+    background: linear-gradient(135deg, #0066cc, #0099ff) !important;
+    color: var(--white) !important;
+    box-shadow: 0 4px 12px rgba(30, 144, 255, 0.3);
+    transform: translateY(-1px);
+}
+
+.nav-button.active::after {
+    display: none;
+}
+
+.nav-toggle {
+    display: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--text-dark);
+    background: none;
+    border: none;
+}
+
+/* User Menu Styles - moved to bottom for consistency */
+
+/* Mobile Navigation */
+@media (max-width: 768px) {
+    .nav-menu {
+        position: fixed;
+        top: 70px;
+        left: -100%;
+        width: 100%;
+        height: calc(100vh - 70px);
+        background: var(--white);
+        flex-direction: column;
+        justify-content: flex-start;
+        padding: 2rem;
+        transition: left 0.3s ease;
+        box-shadow: var(--shadow-lg);
+        gap: 0;
+    }
+
+    .nav-menu.active {
+        left: 0;
+    }
+
+    .nav-toggle {
+        display: block;
+    }
+
+    .nav-link {
+        padding: 1rem;
+        width: 100%;
+        text-align: left;
+        border-bottom: 1px solid #e2e8f0;
+        justify-content: flex-start;
+    }
+
+    .nav-link:last-child {
+        border-bottom: none;
+    }
+
+    .user-menu {
+        flex-direction: column;
+        width: 100%;
+        gap: 0;
+    }
+
+    .user-avatar {
+        margin-bottom: 0.5rem;
+    }
+}
+
+/* Navbar Scroll Effect */
+.navbar.scrolled {
+    background: rgba(255, 255, 255, 0.98);
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+}
+/* Tambahkan style untuk user menu */
+.user-menu {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: rgba(30, 144, 255, 0.1);
+    border-radius: var(--border-radius);
+    color: var(--primary-blue);
+    font-weight: 500;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.user-menu:hover {
+    background: rgba(30, 144, 255, 0.2);
+    transform: translateY(-1px);
+}
+
+.user-menu.active {
+    background: rgba(30, 144, 255, 0.15);
+}
+
+.user-menu.active::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 1rem;
+    right: 1rem;
+    height: 2px;
+    background: var(--gradient-primary);
+    border-radius: 2px;
+}
+
+.user-menu:focus {
+    outline: 2px solid rgba(30, 144, 255, 0.3);
+    outline-offset: 2px;
+}
+
+.user-avatar {
+    width: 32px;
+    height: 32px;
+    background: var(--gradient-primary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--white);
+    font-size: 0.9rem;
+}
+
+/* Style untuk loading spinner */
+.spin {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}

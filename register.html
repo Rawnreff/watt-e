@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daftar - Watt-E</title>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/navbar.css">
+    <link rel="stylesheet" href="css/auth.css">
+    <script>
+        (function() {
+            function updateNavbar() {
+                const navMenu = document.getElementById('navMenu');
+                if (!navMenu) return;
+                const token = localStorage.getItem('watt_e_token');
+                const savedUser = localStorage.getItem('watt_e_user');
+                const isLoggedIn = !!(token && savedUser);
+                if (isLoggedIn) {
+                    navMenu.classList.add('authenticated');
+                    const authLinks = navMenu.querySelectorAll('a[href="login.html"], a[href="register.html"]');
+                    authLinks.forEach(l => l.style.display = 'none');
+                    const dashboard = navMenu.querySelector('a[href="dashboard.html"]');
+                    const predict = navMenu.querySelector('a[href="predict.html"]');
+                    const profile = navMenu.querySelector('a[href="profile.html"]');
+                    if (dashboard) dashboard.style.display = 'flex';
+                    if (predict) predict.style.display = 'flex';
+                    if (profile) profile.style.display = 'none';
+                    let userMenu = navMenu.querySelector('.user-menu');
+                    if (!userMenu) {
+                        userMenu = document.createElement('a');
+                        userMenu.className = 'user-menu';
+                        userMenu.href = 'profile.html';
+                        navMenu.appendChild(userMenu);
+                    } else if (userMenu.tagName !== 'A') {
+                        const newMenu = document.createElement('a');
+                        newMenu.className = 'user-menu';
+                        newMenu.href = 'profile.html';
+                        newMenu.innerHTML = userMenu.innerHTML;
+                        userMenu.replaceWith(newMenu);
+                        userMenu = newMenu;
+                    } else {
+                        userMenu.href = 'profile.html';
+                    }
+                    try {
+                        const user = JSON.parse(savedUser);
+                        const name = user?.name?.split(' ')[0] || 'User';
+                        userMenu.innerHTML = '<div class="user-avatar"><i class="ri-user-line"></i></div><span>' + name + '</span>';
+                        if (window.location.pathname.split('/').pop() === 'profile.html') {
+                            userMenu.classList.add('active');
+                        }
+                    } catch(e) {
+                        userMenu.innerHTML = '<div class="user-avatar"><i class="ri-user-line"></i></div><span>User</span>';
+                    }
+                } else {
+                    navMenu.classList.remove('authenticated');
+                    const authLinks = navMenu.querySelectorAll('a[href="login.html"], a[href="register.html"]');
+                    authLinks.forEach(l => l.style.display = 'flex');
+                    const protectedLinks = navMenu.querySelectorAll('a[href="dashboard.html"], a[href="predict.html"], a[href="profile.html"]');
+                    protectedLinks.forEach(l => l.style.display = 'none');
+                    const userMenu = navMenu.querySelector('.user-menu');
+                    if (userMenu) userMenu.remove();
+                }
+            }
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', updateNavbar);
+            } else {
+                updateNavbar();
+            }
+        })();
+    </script>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="ri-flashlight-line"></i>
+                <span>Watt-E</span>
+            </div>
+            <div class="nav-menu" id="navMenu">
+                <a href="index.html" class="nav-link">
+                    <i class="ri-home-line"></i>
+                    Beranda
+                </a>
+                <a href="about.html" class="nav-link">
+                    <i class="ri-information-line"></i>
+                    Tentang
+                </a>
+                <a href="tariff.html" class="nav-link">
+                    <i class="ri-money-dollar-circle-line"></i>
+                    Tarif
+                </a>
+                <a href="contact.html" class="nav-link">
+                    <i class="ri-customer-service-line"></i>
+                    Kontak
+                </a>
+                <a href="dashboard.html" class="nav-link">
+                    <i class="ri-dashboard-line"></i>
+                    Dashboard
+                </a>
+                <a href="predict.html" class="nav-link">
+                    <i class="ri-robot-line"></i>
+                    Prediksi
+                </a>
+                <a href="profile.html" class="nav-link">
+                    <i class="ri-user-line"></i>
+                    Profil
+                </a>
+                <a href="login.html" class="nav-link">
+                    <i class="ri-login-box-line"></i>
+                    Masuk
+                </a>
+                <a href="register.html" class="nav-link nav-button active">
+                    <i class="ri-user-add-line"></i>
+                    Daftar
+                </a>
+            </div>
+            <div class="nav-toggle" id="navToggle">
+                <i class="ri-menu-line"></i>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Auth Section -->
+    <section class="auth-section">
+        <div class="auth-container">
+            <div class="auth-card">
+                <div class="auth-header">
+                    <div class="auth-icon">
+                        <i class="ri-user-add-line"></i>
+                    </div>
+                    <h1>Daftar Watt-E</h1>
+                    <p>Bergabunglah untuk mulai memprediksi konsumsi listrik Anda</p>
+                </div>
+
+                <form id="registerForm" class="auth-form">
+                    <div class="form-group">
+                        <label for="name" class="form-label">Nama Lengkap</label>
+                        <input type="text" id="name" name="name" class="form-input" placeholder="Masukkan nama lengkap" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" id="email" name="email" class="form-input" placeholder="nama@email.com" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" id="password" name="password" class="form-input" placeholder="Minimal 6 karakter" minlength="6" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="golongan_pln" class="form-label">Golongan Tarif PLN</label>
+                        <select id="golongan_pln" name="golongan_pln" class="form-select" required>
+                            <option value="">Pilih golongan tarif</option>
+                            <option value="R-1/900">R-1/900 VA</option>
+                            <option value="R-1/1300">R-1/1300 VA</option>
+                            <option value="R-1/2200">R-1/2200 VA</option>
+                            <option value="R-2/3500">R-2/3500 VA</option>
+                            <option value="R-3/5500">R-3/5500 VA</option>
+                            <option value="B-2/6600">B-2/6600 VA</option>
+                            <option value="I-3/14000">I-3/14000 VA</option>
+                        </select>
+                    </div>
+
+                    <div class="form-terms">
+                        <label class="checkbox-container">
+                            <input type="checkbox" id="agreeTerms" required>
+                            <span class="checkmark"></span>
+                            Saya menyetujui SNK (<a href="#">Syarat & Ketentuan</a>) dan KP (<a href="#">Kebijakan Privasi</a>)
+                        </label>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-full">
+                        <i class="ri-user-add-line"></i>
+                        Daftar Sekarang
+                    </button>
+                </form>
+
+                <div class="auth-footer">
+                    <p>Sudah punya akun? <a href="login.html">Masuk di sini</a></p>
+                </div>
+            </div>
+
+            <div class="auth-features">
+                <div class="feature-highlight">
+                    <i class="ri-artificial-intelligence-line"></i>
+                    <h3>Prediksi AI</h3>
+                    <p>Gunakan teknologi AI untuk prediksi konsumsi yang akurat</p>
+                </div>
+                <div class="feature-highlight">
+                    <i class="ri-line-chart-line"></i>
+                    <h3>Analisis Detail</h3>
+                    <p>Dapatkan analisis mendalam tentang pola konsumsi listrik</p>
+                </div>
+                <div class="feature-highlight">
+                    <i class="ri-money-dollar-circle-line"></i>
+                    <h3>Hemat Biaya</h3>
+                    <p>Optimalkan pengeluaran listrik bulanan Anda</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/ui.js"></script>
+</body>
+</html>

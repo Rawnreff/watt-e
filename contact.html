@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kontak - Watt-E</title>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/navbar.css">
+    <link rel="stylesheet" href="css/contact.css">
+    <script>
+        (function() {
+            function updateNavbar() {
+                const navMenu = document.getElementById('navMenu');
+                if (!navMenu) return;
+                const token = localStorage.getItem('watt_e_token');
+                const savedUser = localStorage.getItem('watt_e_user');
+                const isLoggedIn = !!(token && savedUser);
+                if (isLoggedIn) {
+                    navMenu.classList.add('authenticated');
+                    const authLinks = navMenu.querySelectorAll('a[href="login.html"], a[href="register.html"]');
+                    authLinks.forEach(l => l.style.display = 'none');
+                    const dashboard = navMenu.querySelector('a[href="dashboard.html"]');
+                    const predict = navMenu.querySelector('a[href="predict.html"]');
+                    const profile = navMenu.querySelector('a[href="profile.html"]');
+                    if (dashboard) dashboard.style.display = 'flex';
+                    if (predict) predict.style.display = 'flex';
+                    if (profile) profile.style.display = 'none';
+                    let userMenu = navMenu.querySelector('.user-menu');
+                    if (!userMenu) {
+                        userMenu = document.createElement('a');
+                        userMenu.className = 'user-menu';
+                        userMenu.href = 'profile.html';
+                        navMenu.appendChild(userMenu);
+                    } else if (userMenu.tagName !== 'A') {
+                        const newMenu = document.createElement('a');
+                        newMenu.className = 'user-menu';
+                        newMenu.href = 'profile.html';
+                        newMenu.innerHTML = userMenu.innerHTML;
+                        userMenu.replaceWith(newMenu);
+                        userMenu = newMenu;
+                    } else {
+                        userMenu.href = 'profile.html';
+                    }
+                    try {
+                        const user = JSON.parse(savedUser);
+                        const name = user?.name?.split(' ')[0] || 'User';
+                        userMenu.innerHTML = '<div class="user-avatar"><i class="ri-user-line"></i></div><span>' + name + '</span>';
+                        if (window.location.pathname.split('/').pop() === 'profile.html') {
+                            userMenu.classList.add('active');
+                        }
+                    } catch(e) {
+                        userMenu.innerHTML = '<div class="user-avatar"><i class="ri-user-line"></i></div><span>User</span>';
+                    }
+                } else {
+                    navMenu.classList.remove('authenticated');
+                    const authLinks = navMenu.querySelectorAll('a[href="login.html"], a[href="register.html"]');
+                    authLinks.forEach(l => l.style.display = 'flex');
+                    const protectedLinks = navMenu.querySelectorAll('a[href="dashboard.html"], a[href="predict.html"], a[href="profile.html"]');
+                    protectedLinks.forEach(l => l.style.display = 'none');
+                    const userMenu = navMenu.querySelector('.user-menu');
+                    if (userMenu) userMenu.remove();
+                }
+            }
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', updateNavbar);
+            } else {
+                updateNavbar();
+            }
+        })();
+    </script>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="ri-flashlight-line"></i>
+                <span>Watt-E</span>
+            </div>
+            <div class="nav-menu" id="navMenu">
+                <a href="index.html" class="nav-link">
+                    <i class="ri-home-line"></i>
+                    Beranda
+                </a>
+                <a href="about.html" class="nav-link">
+                    <i class="ri-information-line"></i>
+                    Tentang
+                </a>
+                <a href="tariff.html" class="nav-link">
+                    <i class="ri-money-dollar-circle-line"></i>
+                    Tarif
+                </a>
+                <a href="contact.html" class="nav-link active">
+                    <i class="ri-customer-service-line"></i>
+                    Kontak
+                </a>
+                <a href="dashboard.html" class="nav-link">
+                    <i class="ri-dashboard-line"></i>
+                    Dashboard
+                </a>
+                <a href="predict.html" class="nav-link">
+                    <i class="ri-robot-line"></i>
+                    Prediksi
+                </a>
+                <a href="profile.html" class="nav-link">
+                    <i class="ri-user-line"></i>
+                    Profil
+                </a>
+                <a href="login.html" class="nav-link">
+                    <i class="ri-login-box-line"></i>
+                    Masuk
+                </a>
+                <a href="register.html" class="nav-link nav-button">
+                    <i class="ri-user-add-line"></i>
+                    Daftar
+                </a>
+            </div>
+            <div class="nav-toggle" id="navToggle">
+                <i class="ri-menu-line"></i>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contact Hero -->
+    <section class="contact-hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>Hubungi Kami</h1>
+                <p>Kami siap membantu Anda dalam mengoptimalkan penggunaan listrik</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact-section">
+        <div class="container">
+            <div class="contact-grid">
+                <div class="contact-form-container">
+                    <h2>Kirim Pesan</h2>
+                    <form id="contactForm" class="contact-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="contactName" class="form-label">Nama Lengkap</label>
+                                <input type="text" id="contactName" name="name" class="form-input" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="contactEmail" class="form-label">Email</label>
+                                <input type="email" id="contactEmail" name="email" class="form-input" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="contactSubject" class="form-label">Subjek</label>
+                            <input type="text" id="contactSubject" name="subject" class="form-input" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="contactMessageText" class="form-label">Pesan</label>
+                            <textarea id="contactMessageText" name="message" class="form-textarea" rows="5" placeholder="Tulis pesan Anda di sini..." required></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="contactConsent" required>
+                                <span class="checkmark"></span>
+                                Saya setuju dengan <a href="#">Kebijakan Privasi</a> dan mengizinkan Watt-E menghubungi saya
+                            </label>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-full" id="submitBtn">
+                            <i class="ri-send-plane-line"></i>
+                            <span id="submitBtnText">Kirim Pesan</span>
+                        </button>
+                        <div id="contactMessageDiv" class="contact-message"></div>
+                    </form>
+                </div>
+
+                <div class="contact-info">
+                    <div class="info-card">
+                        <div class="info-icon">
+                            <i class="ri-map-pin-line"></i>
+                        </div>
+                        <h3>Lokasi</h3>
+                        <p>Jakarta, Indonesia</p>
+                        <p>Digital Office</p>
+                    </div>
+
+                    <div class="info-card">
+                        <div class="info-icon">
+                            <i class="ri-mail-line"></i>
+                        </div>
+                        <h3>Email</h3>
+                        <p>support@watt-e.com</p>
+                        <p>info@watt-e.com</p>
+                    </div>
+
+                    <div class="info-card">
+                        <div class="info-icon">
+                            <i class="ri-phone-line"></i>
+                        </div>
+                        <h3>Telepon</h3>
+                        <p>+62 21 1234 5678</p>
+                        <p>+62 811 2233 4455</p>
+                    </div>
+
+                    <div class="info-card">
+                        <div class="info-icon">
+                            <i class="ri-time-line"></i>
+                        </div>
+                        <h3>Jam Operasional</h3>
+                        <p>Senin - Jumat: 08:00 - 17:00</p>
+                        <p>Sabtu: 08:00 - 12:00</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="faq-section">
+        <div class="container">
+            <h2 class="section-title">Pertanyaan Umum</h2>
+            <div class="faq-grid">
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>Bagaimana cara menggunakan Watt-E?</h3>
+                        <i class="ri-add-line"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Daftar akun, lengkapi profil dengan golongan tarif PLN, lalu gunakan fitur prediksi dengan memasukkan data penggunaan bulan sebelumnya.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>Apakah Watt-E gratis?</h3>
+                        <i class="ri-add-line"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Ya, Watt-E sepenuhnya gratis untuk penggunaan personal. Kami berkomitmen membantu masyarakat menghemat energi.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>Seberapa akurat prediksi yang diberikan?</h3>
+                        <i class="ri-add-line"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Akurasi prediksi kami mencapai 85-95% berdasarkan data historis dan pola penggunaan. Hasil dapat bervariasi tergantung konsistensi penggunaan.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>Bagaimana dengan keamanan data saya?</h3>
+                        <i class="ri-add-line"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Data Anda dilindungi dengan enkripsi end-to-end dan tidak akan dibagikan kepada pihak ketiga tanpa izin.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/ui.js"></script>
+    <script>
+        // FAQ Toggle
+        document.querySelectorAll('.faq-question').forEach(question => {
+            question.addEventListener('click', () => {
+                const answer = question.nextElementSibling;
+                const icon = question.querySelector('i');
+                
+                answer.style.display = answer.style.display === 'block' ? 'none' : 'block';
+                icon.className = answer.style.display === 'block' ? 'ri-subtract-line' : 'ri-add-line';
+            });
+        });
+
+        // Auto-resize textarea
+        const textarea = document.getElementById('contactMessageText');
+        if (textarea) {
+            textarea.addEventListener('input', function() {
+                this.style.height = 'auto';
+                this.style.height = Math.min(this.scrollHeight, 300) + 'px';
+            });
+        }
+
+        // Contact Form Handler
+        document.getElementById('contactForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            const submitBtnText = document.getElementById('submitBtnText');
+            const messageDiv = document.getElementById('contactMessageDiv');
+            const form = this;
+            
+            // Disable button and show loading
+            submitBtn.disabled = true;
+            submitBtnText.innerHTML = '<i class="ri-loader-4-line spin"></i> Mengirim...';
+            messageDiv.innerHTML = '';
+            messageDiv.className = 'contact-message';
+            
+            try {
+                const formData = new FormData(form);
+                const messageData = {
+                    name: formData.get('name'),
+                    email: formData.get('email'),
+                    subject: formData.get('subject'),
+                    message: formData.get('message')
+                };
+                
+                const result = await apiClient.sendContactMessage(messageData);
+                
+                // Show success message
+                messageDiv.className = 'contact-message success';
+                messageDiv.innerHTML = `
+                    <i class="ri-checkbox-circle-line"></i>
+                    <span>${result.message || 'Pesan berhasil dikirim! Kami akan menghubungi Anda dalam 1x24 jam.'}</span>
+                `;
+                
+                // Reset form
+                form.reset();
+                
+                // Reset textarea height
+                if (textarea) {
+                    textarea.style.height = 'auto';
+                }
+                
+                // Scroll to message
+                messageDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                
+            } catch (error) {
+                // Show error message
+                messageDiv.className = 'contact-message error';
+                messageDiv.innerHTML = `
+                    <i class="ri-error-warning-line"></i>
+                    <span>${error.message || 'Gagal mengirim pesan. Silakan coba lagi.'}</span>
+                `;
+            } finally {
+                // Re-enable button
+                submitBtn.disabled = false;
+                submitBtnText.innerHTML = '<i class="ri-send-plane-line"></i> Kirim Pesan';
+            }
+        });
+    </script>
+</body>
+</html>

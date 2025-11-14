@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Watt-E - Prediksi Konsumsi Listrik</title>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/navbar.css">
+    <link rel="stylesheet" href="css/banner.css">
+    <script>
+        // Quick navbar update to prevent flash - runs immediately
+        (function() {
+            function updateNavbar() {
+                const navMenu = document.getElementById('navMenu');
+                if (!navMenu) return;
+                
+                const token = localStorage.getItem('watt_e_token');
+                const savedUser = localStorage.getItem('watt_e_user');
+                const isLoggedIn = !!(token && savedUser);
+                
+                if (isLoggedIn) {
+                    navMenu.classList.add('authenticated');
+                    const authLinks = navMenu.querySelectorAll('a[href="login.html"], a[href="register.html"]');
+                    authLinks.forEach(l => l.style.display = 'none');
+                    const dashboard = navMenu.querySelector('a[href="dashboard.html"]');
+                    const predict = navMenu.querySelector('a[href="predict.html"]');
+                    const profile = navMenu.querySelector('a[href="profile.html"]');
+                    if (dashboard) dashboard.style.display = 'flex';
+                    if (predict) predict.style.display = 'flex';
+                    if (profile) profile.style.display = 'none';
+                    
+                    let userMenu = navMenu.querySelector('.user-menu');
+                    if (!userMenu) {
+                        userMenu = document.createElement('a');
+                        userMenu.className = 'user-menu';
+                        userMenu.href = 'profile.html';
+                        navMenu.appendChild(userMenu);
+                    } else if (userMenu.tagName !== 'A') {
+                        const newMenu = document.createElement('a');
+                        newMenu.className = 'user-menu';
+                        newMenu.href = 'profile.html';
+                        newMenu.innerHTML = userMenu.innerHTML;
+                        userMenu.replaceWith(newMenu);
+                        userMenu = newMenu;
+                    } else {
+                        userMenu.href = 'profile.html';
+                    }
+                    
+                    try {
+                        const user = JSON.parse(savedUser);
+                        const name = user?.name?.split(' ')[0] || 'User';
+                        userMenu.innerHTML = '<div class="user-avatar"><i class="ri-user-line"></i></div><span>' + name + '</span>';
+                        if (window.location.pathname.split('/').pop() === 'profile.html') {
+                            userMenu.classList.add('active');
+                        }
+                    } catch(e) {
+                        userMenu.innerHTML = '<div class="user-avatar"><i class="ri-user-line"></i></div><span>User</span>';
+                    }
+                } else {
+                    navMenu.classList.remove('authenticated');
+                    const authLinks = navMenu.querySelectorAll('a[href="login.html"], a[href="register.html"]');
+                    authLinks.forEach(l => l.style.display = 'flex');
+                    const protectedLinks = navMenu.querySelectorAll('a[href="dashboard.html"], a[href="predict.html"], a[href="profile.html"]');
+                    protectedLinks.forEach(l => l.style.display = 'none');
+                    const userMenu = navMenu.querySelector('.user-menu');
+                    if (userMenu) userMenu.remove();
+                }
+            }
+            
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', updateNavbar);
+            } else {
+                updateNavbar();
+            }
+        })();
+    </script>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="ri-flashlight-line"></i>
+                <span>Watt-E</span>
+            </div>
+            <div class="nav-menu" id="navMenu">
+                <a href="index.html" class="nav-link active">
+                    <i class="ri-home-line"></i>
+                    Beranda
+                </a>
+                <a href="about.html" class="nav-link">
+                    <i class="ri-information-line"></i>
+                    Tentang
+                </a>
+                <a href="tariff.html" class="nav-link">
+                    <i class="ri-money-dollar-circle-line"></i>
+                    Tarif
+                </a>
+                <a href="contact.html" class="nav-link">
+                    <i class="ri-customer-service-line"></i>
+                    Kontak
+                </a>
+                <a href="dashboard.html" class="nav-link">
+                    <i class="ri-dashboard-line"></i>
+                    Dashboard
+                </a>
+                <a href="predict.html" class="nav-link">
+                    <i class="ri-robot-line"></i>
+                    Prediksi
+                </a>
+                <a href="profile.html" class="nav-link">
+                    <i class="ri-user-line"></i>
+                    Profil
+                </a>
+                <a href="login.html" class="nav-link">
+                    <i class="ri-login-box-line"></i>
+                    Masuk
+                </a>
+                <a href="register.html" class="nav-link nav-button">
+                    <i class="ri-user-add-line"></i>
+                    Daftar
+                </a>
+            </div>
+            <div class="nav-toggle" id="navToggle">
+                <i class="ri-menu-line"></i>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Rest of your content remains the same -->
+    <section class="banner">
+        <div class="banner-container">
+            <div class="banner-content">
+                <h1 class="banner-title">
+                    <span class="title-main">Prediksi Konsumsi</span>
+                    <span class="title-accent">Listrik Anda</span>
+                </h1>
+                <p class="banner-description">
+                    Dengan teknologi AI terbaru, Watt-E membantu Anda memprediksi penggunaan listrik 
+                    dan mengoptimalkan pengeluaran bulanan.
+                </p>
+                <div class="banner-stats">
+                    <div class="stat-item">
+                        <i class="ri-brain-line"></i>
+                        <span>AI Powered</span>
+                    </div>
+                    <div class="stat-item">
+                        <i class="ri-shield-check-line"></i>
+                        <span>Akurasi Tinggi</span>
+                    </div>
+                    <div class="stat-item">
+                        <i class="ri-money-dollar-circle-line"></i>
+                        <span>Hemat Biaya</span>
+                    </div>
+                </div>
+                <div class="banner-actions">
+                    <a href="register.html" class="btn btn-primary" data-public-only>
+                        <i class="ri-rocket-line"></i>
+                        Mulai Sekarang
+                    </a>
+                    <a href="dashboard.html" class="btn btn-primary" data-auth-only style="display: none;">
+                        <i class="ri-dashboard-line"></i>
+                        Ke Dashboard
+                    </a>
+                    <a href="about.html" class="btn btn-secondary">
+                        <i class="ri-information-line"></i>
+                        Pelajari Lebih
+                    </a>
+                </div>
+            </div>
+            <div class="banner-visual">
+                <div class="energy-circle">
+                    <div class="circle-core">
+                        <i class="ri-flashlight-fill"></i>
+                    </div>
+                    <div class="circle-ring ring-1"></div>
+                    <div class="circle-ring ring-2"></div>
+                    <div class="circle-ring ring-3"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features">
+        <div class="container">
+            <h2 class="section-title">Mengapa Memilih Watt-E?</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="ri-robot-line"></i>
+                    </div>
+                    <h3>AI Prediction</h3>
+                    <p>Prediksi cerdas menggunakan Gemini AI untuk akurasi terbaik</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="ri-line-chart-line"></i>
+                    </div>
+                    <h3>Analisis Detail</h3>
+                    <p>Analisis pola konsumsi dan rekomendasi penghematan</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="ri-user-line"></i>
+                    </div>
+                    <h3>Personalized</h3>
+                    <p>Rekomendasi yang disesuaikan dengan profil penggunaan Anda</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/ui.js"></script>
+</body>
+</html>

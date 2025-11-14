@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profil - Watt-E</title>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/navbar.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <script>
+        (function() {
+            function updateNavbar() {
+                const navMenu = document.getElementById('navMenu');
+                if (!navMenu) return;
+                const token = localStorage.getItem('watt_e_token');
+                const savedUser = localStorage.getItem('watt_e_user');
+                const isLoggedIn = !!(token && savedUser);
+                if (isLoggedIn) {
+                    navMenu.classList.add('authenticated');
+                    const authLinks = navMenu.querySelectorAll('a[href="login.html"], a[href="register.html"]');
+                    authLinks.forEach(l => l.style.display = 'none');
+                    const dashboard = navMenu.querySelector('a[href="dashboard.html"]');
+                    const predict = navMenu.querySelector('a[href="predict.html"]');
+                    const profile = navMenu.querySelector('a[href="profile.html"]');
+                    if (dashboard) dashboard.style.display = 'flex';
+                    if (predict) predict.style.display = 'flex';
+                    if (profile) profile.style.display = 'none';
+                    let userMenu = navMenu.querySelector('.user-menu');
+                    if (!userMenu) {
+                        userMenu = document.createElement('a');
+                        userMenu.className = 'user-menu';
+                        userMenu.href = 'profile.html';
+                        navMenu.appendChild(userMenu);
+                    } else if (userMenu.tagName !== 'A') {
+                        const newMenu = document.createElement('a');
+                        newMenu.className = 'user-menu';
+                        newMenu.href = 'profile.html';
+                        newMenu.innerHTML = userMenu.innerHTML;
+                        userMenu.replaceWith(newMenu);
+                        userMenu = newMenu;
+                    } else {
+                        userMenu.href = 'profile.html';
+                    }
+                    try {
+                        const user = JSON.parse(savedUser);
+                        const name = user?.name?.split(' ')[0] || 'User';
+                        userMenu.innerHTML = '<div class="user-avatar"><i class="ri-user-line"></i></div><span>' + name + '</span>';
+                        if (window.location.pathname.split('/').pop() === 'profile.html') {
+                            userMenu.classList.add('active');
+                        }
+                    } catch(e) {
+                        userMenu.innerHTML = '<div class="user-avatar"><i class="ri-user-line"></i></div><span>User</span>';
+                    }
+                } else {
+                    navMenu.classList.remove('authenticated');
+                    const authLinks = navMenu.querySelectorAll('a[href="login.html"], a[href="register.html"]');
+                    authLinks.forEach(l => l.style.display = 'flex');
+                    const protectedLinks = navMenu.querySelectorAll('a[href="dashboard.html"], a[href="predict.html"], a[href="profile.html"]');
+                    protectedLinks.forEach(l => l.style.display = 'none');
+                    const userMenu = navMenu.querySelector('.user-menu');
+                    if (userMenu) userMenu.remove();
+                }
+            }
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', updateNavbar);
+            } else {
+                updateNavbar();
+            }
+        })();
+    </script>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="ri-flashlight-line"></i>
+                <span>Watt-E</span>
+            </div>
+            <div class="nav-menu" id="navMenu">
+                <a href="index.html" class="nav-link">
+                    <i class="ri-home-line"></i>
+                    Beranda
+                </a>
+                <a href="about.html" class="nav-link">
+                    <i class="ri-information-line"></i>
+                    Tentang
+                </a>
+                <a href="tariff.html" class="nav-link">
+                    <i class="ri-money-dollar-circle-line"></i>
+                    Tarif
+                </a>
+                <a href="contact.html" class="nav-link">
+                    <i class="ri-customer-service-line"></i>
+                    Kontak
+                </a>
+                <a href="dashboard.html" class="nav-link">
+                    <i class="ri-dashboard-line"></i>
+                    Dashboard
+                </a>
+                <a href="predict.html" class="nav-link">
+                    <i class="ri-robot-line"></i>
+                    Prediksi
+                </a>
+                <a href="profile.html" class="nav-link active">
+                    <i class="ri-user-line"></i>
+                    Profil
+                </a>
+                <a href="login.html" class="nav-link">
+                    <i class="ri-login-box-line"></i>
+                    Masuk
+                </a>
+                <a href="register.html" class="nav-link nav-button">
+                    <i class="ri-user-add-line"></i>
+                    Daftar
+                </a>
+            </div>
+            <div class="nav-toggle" id="navToggle">
+                <i class="ri-menu-line"></i>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Profile Section -->
+    <section class="dashboard">
+        <div class="container">
+            <div class="dashboard-header">
+                <h1 class="dashboard-title">Profil Pengguna</h1>
+                <p class="dashboard-subtitle">Kelola informasi akun dan preferensi Anda</p>
+            </div>
+
+            <div class="dashboard-grid">
+                <div class="main-content">
+                    <!-- Profile Info -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">Informasi Profil</h2>
+                            <i class="ri-user-line"></i>
+                        </div>
+                        <form id="profileForm">
+                            <div class="form-group">
+                                <label for="name" class="form-label">Nama Lengkap</label>
+                                <input type="text" id="name" name="name" class="form-input" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" id="email" name="email" class="form-input" disabled>
+                                <small class="form-help">Email tidak dapat diubah</small>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="golongan_pln" class="form-label">Golongan Tarif PLN</label>
+                                <select id="golongan_pln" name="golongan_pln" class="form-select" required>
+                                    <option value="R-1/900">R-1/900 VA</option>
+                                    <option value="R-1/1300">R-1/1300 VA</option>
+                                    <option value="R-1/2200">R-1/2200 VA</option>
+                                    <option value="R-2/3500">R-2/3500 VA</option>
+                                    <option value="R-3/5500">R-3/5500 VA</option>
+                                    <option value="B-2/6600">B-2/6600 VA</option>
+                                    <option value="I-3/14000">I-3/14000 VA</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Tanggal Bergabung</label>
+                                <input type="text" id="joinDate" class="form-input" disabled>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary">
+                                <i class="ri-save-line"></i>
+                                Simpan Perubahan
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Change Password -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">Ubah Password</h2>
+                            <i class="ri-lock-line"></i>
+                        </div>
+                        <form id="passwordForm">
+                            <div class="form-group">
+                                <label for="current_password" class="form-label">Password Saat Ini</label>
+                                <input type="password" id="current_password" name="current_password" class="form-input" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="new_password" class="form-label">Password Baru</label>
+                                <input type="password" id="new_password" name="new_password" class="form-input" minlength="6" required>
+                                <small class="form-help">Minimal 6 karakter</small>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="confirm_password" class="form-label">Konfirmasi Password Baru</label>
+                                <input type="password" id="confirm_password" name="confirm_password" class="form-input" minlength="6" required>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary">
+                                <i class="ri-lock-password-line"></i>
+                                Ubah Password
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="sidebar">
+                    <!-- User Summary -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Ringkasan Akun</h3>
+                            <i class="ri-profile-line"></i>
+                        </div>
+                        <div class="user-summary">
+                            <div class="user-avatar">
+                                <i class="ri-user-fill"></i>
+                            </div>
+                            <div class="user-info">
+                                <h4 id="userName">-</h4>
+                                <p id="userEmail">-</p>
+                                <p class="user-golongan" id="userGolongan">-</p>
+                            </div>
+                            <div class="user-stats">
+                                <div class="user-stat">
+                                    <i class="ri-history-line"></i>
+                                    <span>Prediksi: <strong id="totalUserPredictions">0</strong></span>
+                                </div>
+                                <div class="user-stat">
+                                    <i class="ri-calendar-line"></i>
+                                    <span>Bergabung: <strong id="userJoinDate">-</strong></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Account Actions -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Aksi Akun</h3>
+                            <i class="ri-settings-3-line"></i>
+                        </div>
+                        <div class="account-actions">
+                            <button class="btn btn-secondary btn-full" onclick="exportData()">
+                                <i class="ri-download-line"></i>
+                                Ekspor Data
+                            </button>
+                            <button class="btn btn-primary btn-full" id="logoutBtnProfile">
+                                <i class="ri-logout-box-line"></i>
+                                Logout
+                            </button>
+                            <button class="btn btn-danger btn-full" onclick="deleteAccount()">
+                                <i class="ri-delete-bin-line"></i>
+                                Hapus Akun
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Security Tips -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Tips Keamanan</h3>
+                            <i class="ri-shield-check-line"></i>
+                        </div>
+                        <div class="tips-list">
+                            <div class="tip-item">
+                                <i class="ri-key-line"></i>
+                                <span>Gunakan password yang kuat</span>
+                            </div>
+                            <div class="tip-item">
+                                <i class="ri-logout-box-line"></i>
+                                <span>Selalu logout dari perangkat lain</span>
+                            </div>
+                            <div class="tip-item">
+                                <i class="ri-shield-keyhole-line"></i>
+                                <span>Jangan bagikan data login</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/user.js"></script>
+    <script src="js/ui.js"></script>
+    <script>
+        function exportData() {
+            // Implementation for data export
+            alert('Fitur ekspor data akan segera hadir!');
+        }
+
+        function deleteAccount() {
+            if (confirm('Apakah Anda yakin ingin menghapus akun? Tindakan ini tidak dapat dibatalkan.')) {
+                alert('Fitur penghapusan akun akan segera hadir!');
+            }
+        }
+
+        // Password confirmation validation
+        document.getElementById('passwordForm')?.addEventListener('submit', function(e) {
+            const newPassword = document.getElementById('new_password').value;
+            const confirmPassword = document.getElementById('confirm_password').value;
+            
+            if (newPassword !== confirmPassword) {
+                e.preventDefault();
+                alert('Konfirmasi password tidak sesuai!');
+            }
+        });
+    </script>
+</body>
+</html>

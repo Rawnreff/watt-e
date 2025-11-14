@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prediksi - Watt-E</title>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/navbar.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <script>
+        (function() {
+            function updateNavbar() {
+                const navMenu = document.getElementById('navMenu');
+                if (!navMenu) return;
+                const token = localStorage.getItem('watt_e_token');
+                const savedUser = localStorage.getItem('watt_e_user');
+                const isLoggedIn = !!(token && savedUser);
+                if (isLoggedIn) {
+                    navMenu.classList.add('authenticated');
+                    const authLinks = navMenu.querySelectorAll('a[href="login.html"], a[href="register.html"]');
+                    authLinks.forEach(l => l.style.display = 'none');
+                    const dashboard = navMenu.querySelector('a[href="dashboard.html"]');
+                    const predict = navMenu.querySelector('a[href="predict.html"]');
+                    const profile = navMenu.querySelector('a[href="profile.html"]');
+                    if (dashboard) dashboard.style.display = 'flex';
+                    if (predict) predict.style.display = 'flex';
+                    if (profile) profile.style.display = 'none';
+                    let userMenu = navMenu.querySelector('.user-menu');
+                    if (!userMenu) {
+                        userMenu = document.createElement('a');
+                        userMenu.className = 'user-menu';
+                        userMenu.href = 'profile.html';
+                        navMenu.appendChild(userMenu);
+                    } else if (userMenu.tagName !== 'A') {
+                        const newMenu = document.createElement('a');
+                        newMenu.className = 'user-menu';
+                        newMenu.href = 'profile.html';
+                        newMenu.innerHTML = userMenu.innerHTML;
+                        userMenu.replaceWith(newMenu);
+                        userMenu = newMenu;
+                    } else {
+                        userMenu.href = 'profile.html';
+                    }
+                    try {
+                        const user = JSON.parse(savedUser);
+                        const name = user?.name?.split(' ')[0] || 'User';
+                        userMenu.innerHTML = '<div class="user-avatar"><i class="ri-user-line"></i></div><span>' + name + '</span>';
+                        if (window.location.pathname.split('/').pop() === 'profile.html') {
+                            userMenu.classList.add('active');
+                        }
+                    } catch(e) {
+                        userMenu.innerHTML = '<div class="user-avatar"><i class="ri-user-line"></i></div><span>User</span>';
+                    }
+                } else {
+                    navMenu.classList.remove('authenticated');
+                    const authLinks = navMenu.querySelectorAll('a[href="login.html"], a[href="register.html"]');
+                    authLinks.forEach(l => l.style.display = 'flex');
+                    const protectedLinks = navMenu.querySelectorAll('a[href="dashboard.html"], a[href="predict.html"], a[href="profile.html"]');
+                    protectedLinks.forEach(l => l.style.display = 'none');
+                    const userMenu = navMenu.querySelector('.user-menu');
+                    if (userMenu) userMenu.remove();
+                }
+            }
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', updateNavbar);
+            } else {
+                updateNavbar();
+            }
+        })();
+    </script>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="ri-flashlight-line"></i>
+                <span>Watt-E</span>
+            </div>
+            <div class="nav-menu" id="navMenu">
+                <a href="index.html" class="nav-link">
+                    <i class="ri-home-line"></i>
+                    Beranda
+                </a>
+                <a href="about.html" class="nav-link">
+                    <i class="ri-information-line"></i>
+                    Tentang
+                </a>
+                <a href="tariff.html" class="nav-link">
+                    <i class="ri-money-dollar-circle-line"></i>
+                    Tarif
+                </a>
+                <a href="contact.html" class="nav-link">
+                    <i class="ri-customer-service-line"></i>
+                    Kontak
+                </a>
+                <a href="dashboard.html" class="nav-link">
+                    <i class="ri-dashboard-line"></i>
+                    Dashboard
+                </a>
+                <a href="predict.html" class="nav-link active">
+                    <i class="ri-robot-line"></i>
+                    Prediksi
+                </a>
+                <a href="profile.html" class="nav-link">
+                    <i class="ri-user-line"></i>
+                    Profil
+                </a>
+                <a href="login.html" class="nav-link">
+                    <i class="ri-login-box-line"></i>
+                    Masuk
+                </a>
+                <a href="register.html" class="nav-link nav-button">
+                    <i class="ri-user-add-line"></i>
+                    Daftar
+                </a>
+            </div>
+            <div class="nav-toggle" id="navToggle">
+                <i class="ri-menu-line"></i>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Predict Section -->
+    <section class="dashboard">
+        <div class="container">
+            <div class="dashboard-header">
+                <h1 class="dashboard-title">Prediksi Konsumsi Listrik</h1>
+                <p class="dashboard-subtitle">Gunakan AI untuk memprediksi penggunaan listrik bulan depan</p>
+            </div>
+
+            <div class="dashboard-grid">
+                <div class="main-content">
+                    <!-- Prediction Form -->
+                    <div class="prediction-form">
+                        <h2 class="form-title">Form Prediksi</h2>
+                        <form id="predictForm">
+                            <div class="form-group">
+                                <label for="kwh_last_month" class="form-label">
+                                    <i class="ri-history-line"></i>
+                                    Penggunaan Bulan Lalu (kWh)
+                                </label>
+                                <input type="number" id="kwh_last_month" name="kwh_last_month" 
+                                       class="form-input" placeholder="Contoh: 120" min="1" step="0.01" required>
+                                <small class="form-help">Masukkan total kWh dari tagihan bulan sebelumnya</small>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="golongan_pln" class="form-label">
+                                    <i class="ri-flashlight-line"></i>
+                                    Golongan Tarif
+                                </label>
+                                <select id="golongan_pln" name="golongan_pln" class="form-select" required>
+                                    <option value="R-1/900">R-1/900 VA</option>
+                                    <option value="R-1/1300">R-1/1300 VA</option>
+                                    <option value="R-1/2200">R-1/2200 VA</option>
+                                    <option value="R-2/3500">R-2/3500 VA</option>
+                                    <option value="R-3/5500">R-3/5500 VA</option>
+                                    <option value="B-2/6600">B-2/6600 VA</option>
+                                    <option value="I-3/14000">I-3/14000 VA</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="ri-calendar-line"></i>
+                                    Periode Prediksi
+                                </label>
+                                <div class="period-display">
+                                    <span id="currentMonth"></span> → <span id="nextMonth"></span>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary btn-full">
+                                <i class="ri-artificial-intelligence-line"></i>
+                                Prediksi Sekarang
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Prediction Result -->
+                    <div id="predictionResult" class="prediction-result">
+                        <!-- Result will be dynamically inserted here -->
+                    </div>
+
+                    <!-- Prediction History -->
+                    <div class="history-section">
+                        <h2 class="section-title">Riwayat Prediksi</h2>
+                        <div id="predictionHistory" class="history-grid">
+                            <!-- History will be dynamically loaded -->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sidebar">
+                    <!-- Quick Stats -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Statistik Cepat</h3>
+                            <i class="ri-dashboard-line"></i>
+                        </div>
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-value" id="avgConsumption">-</div>
+                                <div class="stat-label">Rata-rata kWh</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value" id="totalPredictions">0</div>
+                                <div class="stat-label">Total Prediksi</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tips Section -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Tips Penghematan</h3>
+                            <i class="ri-lightbulb-flash-line"></i>
+                        </div>
+                        <div class="tips-list">
+                            <div class="tip-item">
+                                <i class="ri-timer-line"></i>
+                                <span>Gunakan timer untuk perangkat elektronik</span>
+                            </div>
+                            <div class="tip-item">
+                                <i class="ri-sun-line"></i>
+                                <span>Manfaatkan pencahayaan alami</span>
+                            </div>
+                            <div class="tip-item">
+                                <i class="ri-restart-line"></i>
+                                <span>Servis AC secara berkala</span>
+                            </div>
+                            <div class="tip-item">
+                                <i class="ri-plug-line"></i>
+                                <span>Cabut charger saat tidak digunakan</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Aksi Cepat</h3>
+                            <i class="ri-zap-line"></i>
+                        </div>
+                        <div class="quick-actions">
+                            <a href="dashboard.html" class="btn btn-secondary btn-full">
+                                <i class="ri-dashboard-line"></i>
+                                Ke Dashboard
+                            </a>
+                            <a href="profile.html" class="btn btn-secondary btn-full">
+                                <i class="ri-user-line"></i>
+                                Edit Profil
+                            </a>
+                            <a href="tariff.html" class="btn btn-secondary btn-full">
+                                <i class="ri-money-dollar-circle-line"></i>
+                                Lihat Tarif
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/predict.js"></script>
+    <script src="js/ui.js"></script>
+    <script>
+        // Set current and next month
+        document.addEventListener('DOMContentLoaded', function() {
+            const now = new Date();
+            const currentMonth = now.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' });
+            const nextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+            const nextMonthFormatted = nextMonth.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' });
+
+            document.getElementById('currentMonth').textContent = currentMonth;
+            document.getElementById('nextMonth').textContent = nextMonthFormatted;
+        });
+    </script>
+</body>
+</html>

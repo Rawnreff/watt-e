@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tentang - Watt-E</title>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/navbar.css">
+    <link rel="stylesheet" href="css/about.css">
+    <script>
+        (function() {
+            function updateNavbar() {
+                const navMenu = document.getElementById('navMenu');
+                if (!navMenu) return;
+                const token = localStorage.getItem('watt_e_token');
+                const savedUser = localStorage.getItem('watt_e_user');
+                const isLoggedIn = !!(token && savedUser);
+                if (isLoggedIn) {
+                    navMenu.classList.add('authenticated');
+                    const authLinks = navMenu.querySelectorAll('a[href="login.html"], a[href="register.html"]');
+                    authLinks.forEach(l => l.style.display = 'none');
+                    const dashboard = navMenu.querySelector('a[href="dashboard.html"]');
+                    const predict = navMenu.querySelector('a[href="predict.html"]');
+                    const profile = navMenu.querySelector('a[href="profile.html"]');
+                    if (dashboard) dashboard.style.display = 'flex';
+                    if (predict) predict.style.display = 'flex';
+                    if (profile) profile.style.display = 'none';
+                    let userMenu = navMenu.querySelector('.user-menu');
+                    if (!userMenu) {
+                        userMenu = document.createElement('a');
+                        userMenu.className = 'user-menu';
+                        userMenu.href = 'profile.html';
+                        navMenu.appendChild(userMenu);
+                    } else if (userMenu.tagName !== 'A') {
+                        const newMenu = document.createElement('a');
+                        newMenu.className = 'user-menu';
+                        newMenu.href = 'profile.html';
+                        newMenu.innerHTML = userMenu.innerHTML;
+                        userMenu.replaceWith(newMenu);
+                        userMenu = newMenu;
+                    } else {
+                        userMenu.href = 'profile.html';
+                    }
+                    try {
+                        const user = JSON.parse(savedUser);
+                        const name = user?.name?.split(' ')[0] || 'User';
+                        userMenu.innerHTML = '<div class="user-avatar"><i class="ri-user-line"></i></div><span>' + name + '</span>';
+                        if (window.location.pathname.split('/').pop() === 'profile.html') {
+                            userMenu.classList.add('active');
+                        }
+                    } catch(e) {
+                        userMenu.innerHTML = '<div class="user-avatar"><i class="ri-user-line"></i></div><span>User</span>';
+                    }
+                } else {
+                    navMenu.classList.remove('authenticated');
+                    const authLinks = navMenu.querySelectorAll('a[href="login.html"], a[href="register.html"]');
+                    authLinks.forEach(l => l.style.display = 'flex');
+                    const protectedLinks = navMenu.querySelectorAll('a[href="dashboard.html"], a[href="predict.html"], a[href="profile.html"]');
+                    protectedLinks.forEach(l => l.style.display = 'none');
+                    const userMenu = navMenu.querySelector('.user-menu');
+                    if (userMenu) userMenu.remove();
+                }
+            }
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', updateNavbar);
+            } else {
+                updateNavbar();
+            }
+        })();
+    </script>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="ri-flashlight-line"></i>
+                <span>Watt-E</span>
+            </div>
+            <div class="nav-menu" id="navMenu">
+                <a href="index.html" class="nav-link">
+                    <i class="ri-home-line"></i>
+                    Beranda
+                </a>
+                <a href="about.html" class="nav-link active">
+                    <i class="ri-information-line"></i>
+                    Tentang
+                </a>
+                <a href="tariff.html" class="nav-link">
+                    <i class="ri-money-dollar-circle-line"></i>
+                    Tarif
+                </a>
+                <a href="contact.html" class="nav-link">
+                    <i class="ri-customer-service-line"></i>
+                    Kontak
+                </a>
+                <a href="dashboard.html" class="nav-link">
+                    <i class="ri-dashboard-line"></i>
+                    Dashboard
+                </a>
+                <a href="predict.html" class="nav-link">
+                    <i class="ri-robot-line"></i>
+                    Prediksi
+                </a>
+                <a href="profile.html" class="nav-link">
+                    <i class="ri-user-line"></i>
+                    Profil
+                </a>
+                <a href="login.html" class="nav-link">
+                    <i class="ri-login-box-line"></i>
+                    Masuk
+                </a>
+                <a href="register.html" class="nav-link nav-button">
+                    <i class="ri-user-add-line"></i>
+                    Daftar
+                </a>
+            </div>
+            <div class="nav-toggle" id="navToggle">
+                <i class="ri-menu-line"></i>
+            </div>
+        </div>
+    </nav>
+
+    <!-- About Hero -->
+    <section class="about-hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>Tentang Watt-E</h1>
+                <p>Mengubah Cara Anda Mengelola Konsumsi Listrik dengan Kecerdasan Buatan</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Mission Section -->
+    <section class="mission-section">
+        <div class="container">
+            <div class="mission-grid">
+                <div class="mission-content">
+                    <h2>Misi Kami</h2>
+                    <p>Watt-E hadir untuk membantu masyarakat Indonesia dalam mengoptimalkan penggunaan listrik melalui prediksi cerdas yang akurat. Kami percaya bahwa dengan teknologi yang tepat, setiap rumah tangga dapat lebih efisien dalam mengelola energi.</p>
+                    
+                    <div class="mission-stats">
+                        <div class="mission-stat">
+                            <div class="stat-number">1000+</div>
+                            <div class="stat-label">Pengguna Terdaftar</div>
+                        </div>
+                        <div class="mission-stat">
+                            <div class="stat-number">95%</div>
+                            <div class="stat-label">Akurasi Prediksi</div>
+                        </div>
+                        <div class="mission-stat">
+                            <div class="stat-number">50%</div>
+                            <div class="stat-label">Penghematan Rata-rata</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mission-visual">
+                    <div class="visual-card">
+                        <i class="ri-artificial-intelligence-line"></i>
+                        <h3>AI Powered</h3>
+                        <p>Menggunakan teknologi Gemini AI terbaru</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Detail -->
+    <section class="features-detail">
+        <div class="container">
+            <h2 class="section-title">Fitur Unggulan</h2>
+            <div class="features-grid">
+                <div class="feature-detail">
+                    <div class="feature-icon">
+                        <i class="ri-brain-line"></i>
+                    </div>
+                    <h3>Prediksi AI Cerdas</h3>
+                    <p>Memanfaatkan kecerdasan buatan untuk menganalisis pola konsumsi dan memberikan prediksi yang akurat untuk bulan berikutnya.</p>
+                </div>
+                <div class="feature-detail">
+                    <div class="feature-icon">
+                        <i class="ri-line-chart-line"></i>
+                    </div>
+                    <h3>Analisis Mendalam</h3>
+                    <p>Dapatkan insight detail tentang kebiasaan penggunaan listrik dan identifikasi area yang dapat dioptimalkan.</p>
+                </div>
+                <div class="feature-detail">
+                    <div class="feature-icon">
+                        <i class="ri-money-dollar-circle-line"></i>
+                    </div>
+                    <h3>Penghematan Biaya</h3>
+                    <p>Rekomendasi spesifik untuk mengurangi pengeluaran listrik tanpa mengorbankan kenyamanan.</p>
+                </div>
+                <div class="feature-detail">
+                    <div class="feature-icon">
+                        <i class="ri-history-line"></i>
+                    </div>
+                    <h3>Riwayat Lengkap</h3>
+                    <p>Simpan dan bandingkan prediksi dari waktu ke waktu untuk melihat perkembangan efisiensi energi.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Technology Stack -->
+    <section class="tech-stack">
+        <div class="container">
+            <h2 class="section-title">Teknologi Kami</h2>
+            <div class="tech-grid">
+                <div class="tech-item">
+                    <i class="ri-flask-line"></i>
+                    <h4>Flask Backend</h4>
+                    <p>Framework Python yang ringan dan powerful</p>
+                </div>
+                <div class="tech-item">
+                    <i class="ri-database-2-line"></i>
+                    <h4>MongoDB</h4>
+                    <p>Database NoSQL untuk performa optimal</p>
+                </div>
+                <div class="tech-item">
+                    <i class="ri-ai-generate"></i>
+                    <h4>Gemini AI</h4>
+                    <p>Model AI mutakhir dari Google</p>
+                </div>
+                <div class="tech-item">
+                    <i class="ri-shield-keyhole-line"></i>
+                    <h4>JWT Auth</h4>
+                    <p>Sistem keamanan terenkripsi</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Team Section -->
+    <section class="team-section">
+        <div class="container">
+            <h2 class="section-title">Tim Kami</h2>
+            <div class="team-grid">
+                <div class="team-member">
+                    <div class="member-avatar">
+                        <i class="ri-user-line"></i>
+                    </div>
+                    <h3>AI Engineer</h3>
+                    <p>Spesialis machine learning dan AI integration</p>
+                </div>
+                <div class="team-member">
+                    <div class="member-avatar">
+                        <i class="ri-user-line"></i>
+                    </div>
+                    <h3>Full Stack Developer</h3>
+                    <p>Pengembang aplikasi web full stack</p>
+                </div>
+                <div class="team-member">
+                    <div class="member-avatar">
+                        <i class="ri-user-line"></i>
+                    </div>
+                    <h3>UI/UX Designer</h3>
+                    <p>Desainer pengalaman pengguna</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/ui.js"></script>
+</body>
+</html>
