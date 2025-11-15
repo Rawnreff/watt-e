@@ -78,16 +78,91 @@ function setContactFields(user) {
 
 // Contact Form Submission
 document.getElementById('contactForm').addEventListener('submit', async function(e) {
-    e.preventDefault();
-    
     const submitBtn = document.getElementById('submitBtn');
     const submitText = document.getElementById('submitText');
     const messageDiv = document.getElementById('messageDiv');
     const form = this;
     
-    // Disable button and show loading state
+    // Ensure consent checkbox is checked BEFORE preventing default
+    const consent = document.getElementById('contactConsent');
+    if (consent && !consent.checked) {
+        // Prevent form submission
+        e.preventDefault();
+        
+        // Try to focus the checkbox (it should be focusable now with the CSS fix)
+        try {
+            consent.focus();
+        } catch (err) {
+            // If focus fails, scroll to checkbox container
+            const container = document.querySelector('.checkbox-container');
+            if (container) {
+                container.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+        // show styled alert from ui.js if available, otherwise fallback to alert()
+        // Visual feedback: red highlight + ripple on the checkbox and label
+        try {
+            const checkmark = document.querySelector('.checkmark');
+            const container = document.querySelector('.checkbox-container');
+            const label = container ? container.querySelector('.checkbox-label') : null;
+            
+            if (checkmark && container) {
+                // Add error class to checkmark and container (which affects label)
+                checkmark.classList.add('error');
+                container.classList.add('error', 'shake');
+                
+                // Create ripple effect
+                const ripple = document.createElement('span');
+                ripple.className = 'check-ripple';
+                checkmark.appendChild(ripple);
+                
+                // Force layout reflow to ensure animation starts
+                // eslint-disable-next-line no-unused-expressions
+                ripple.offsetWidth;
+                
+                // Start ripple animation
+                ripple.classList.add('animate');
+                
+                // Remove ripple after animation completes (600ms)
+                setTimeout(() => {
+                    if (ripple.parentNode) {
+                        ripple.remove();
+                    }
+                }, 650);
+                
+                // Remove shake animation after it completes (340ms)
+                setTimeout(() => {
+                    container.classList.remove('shake');
+                }, 400);
+                
+                // Remove error state after 1 second (1000ms) to return to normal color
+                setTimeout(() => {
+                    checkmark.classList.remove('error');
+                    container.classList.remove('error');
+                }, 1000);
+            }
+        } catch (e) {
+                    console.error('Error showing checkbox validation feedback:', e);
+        }
+
+        if (typeof showAlert === 'function') {
+            showAlert({ title: 'Persetujuan Diperlukan', message: 'Silakan setujui Kebijakan Privasi dan mengizinkan Watt-E menghubungi Anda sebelum mengirim pesan.', confirmText: 'Mengerti' });
+        } else {
+            alert('Silakan setujui Kebijakan Privasi dan mengizinkan Watt-E menghubungi Anda sebelum mengirim pesan.');
+        }
+        return;
+    }
+
+    // Prevent default form submission (all validations passed)
+    e.preventDefault();
+
+    // Disable button and show loading state (update existing icon instead of injecting new markup)
     submitBtn.disabled = true;
-    submitText.innerHTML = '<i class="ri-loader-4-line spin"></i> Mengirim...';
+    const iconEl = submitBtn.querySelector('i');
+    if (iconEl) {
+        iconEl.className = 'ri-loader-4-line spin';
+    }
+    submitText.textContent = 'Mengirim...';
     messageDiv.style.display = 'none';
     
     try {
@@ -114,7 +189,7 @@ document.getElementById('contactForm').addEventListener('submit', async function
             // Simulate API call for demo
             await new Promise(resolve => setTimeout(resolve, 1500));
             
-            // Show success message
+            // Show success message (demo)
             messageDiv.className = 'contact-message success';
             messageDiv.innerHTML = `
                 <i class="ri-checkbox-circle-line"></i>
@@ -165,7 +240,10 @@ document.getElementById('contactForm').addEventListener('submit', async function
     } finally {
         // Re-enable button
         submitBtn.disabled = false;
-        submitText.innerHTML = '<i class="ri-send-plane-line"></i> Kirim Pesan';
+        // restore icon and text without duplicating icon element
+        const iconEl2 = submitBtn.querySelector('i');
+        if (iconEl2) iconEl2.className = 'ri-send-plane-line';
+        submitText.textContent = 'Kirim Pesan';
     }
 });
 
