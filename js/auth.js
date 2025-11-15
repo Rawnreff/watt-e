@@ -69,6 +69,82 @@ class AuthManager {
     }
 
     async handleRegister(e) {
+        // Check terms checkbox BEFORE preventing default
+        const agreeTerms = document.getElementById('agreeTerms');
+        if (agreeTerms && !agreeTerms.checked) {
+            // Prevent form submission
+            e.preventDefault();
+            
+            // Try to focus the checkbox
+            try {
+                agreeTerms.focus();
+            } catch (err) {
+                // If focus fails, scroll to checkbox container
+                const container = document.querySelector('.checkbox-container');
+                if (container) {
+                    container.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }
+            
+            // Visual feedback: red highlight + ripple on the checkbox
+            try {
+                const agreeTermsInput = document.getElementById('agreeTerms');
+                const checkmark = agreeTermsInput ? agreeTermsInput.nextElementSibling : null;
+                const container = agreeTermsInput ? agreeTermsInput.closest('.checkbox-container') : null;
+                
+                if (checkmark && container) {
+                    // Add error class to checkmark and container
+                    checkmark.classList.add('error');
+                    container.classList.add('error', 'shake');
+                    
+                    // Create ripple effect
+                    const ripple = document.createElement('span');
+                    ripple.className = 'check-ripple';
+                    checkmark.appendChild(ripple);
+                    
+                    // Force layout reflow to ensure animation starts
+                    // eslint-disable-next-line no-unused-expressions
+                    ripple.offsetWidth;
+                    
+                    // Start ripple animation
+                    ripple.classList.add('animate');
+                    
+                    // Remove ripple after animation completes (600ms)
+                    setTimeout(() => {
+                        if (ripple.parentNode) {
+                            ripple.remove();
+                        }
+                    }, 650);
+                    
+                    // Remove shake animation after it completes (340ms)
+                    setTimeout(() => {
+                        container.classList.remove('shake');
+                    }, 400);
+                    
+                    // Remove error state after 1 second (1000ms) to return to normal color
+                    setTimeout(() => {
+                        checkmark.classList.remove('error');
+                        container.classList.remove('error');
+                    }, 1000);
+                }
+            } catch (err) {
+                console.error('Error showing checkbox validation feedback:', err);
+            }
+
+            // Show alert
+            if (typeof showAlert === 'function') {
+                showAlert({ 
+                    title: 'Persetujuan Diperlukan', 
+                    message: 'Silakan setujui Syarat & Ketentuan dan Kebijakan Privasi sebelum mendaftar.', 
+                    confirmText: 'Mengerti' 
+                });
+            } else {
+                alert('Silakan setujui Syarat & Ketentuan dan Kebijakan Privasi sebelum mendaftar.');
+            }
+            return;
+        }
+
+        // Prevent default form submission (all validations passed)
         e.preventDefault();
         
         const formData = new FormData(e.target);
@@ -104,7 +180,7 @@ class AuthManager {
         } finally {
             const loadingBtn = e.target.querySelector('button[type="submit"]');
             if (loadingBtn) {
-                loadingBtn.textContent = 'Daftar';
+                loadingBtn.textContent = 'Daftar Sekarang';
                 loadingBtn.disabled = false;
             }
         }

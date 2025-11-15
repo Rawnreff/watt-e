@@ -74,20 +74,32 @@
     cursor: pointer;
     font-size: 0.9rem;
     color: var(--text-light);
+    position: relative;
+    transition: color 0.3s ease;
 }
 
 .checkbox-container input {
-    display: none;
+    position: absolute;
+    opacity: 0;
+    width: 18px;
+    height: 18px;
+    margin: 0;
+    padding: 0;
+    cursor: pointer;
+    z-index: 2;
+    left: 0;
 }
 
 .checkmark {
     width: 18px;
     height: 18px;
+    min-width: 18px;
     border: 2px solid #cbd5e0;
     border-radius: 4px;
     margin-right: 0.5rem;
     position: relative;
-    transition: all 0.3s ease;
+    transition: border-color 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+    z-index: 1;
 }
 
 .checkbox-container input:checked + .checkmark {
@@ -103,6 +115,78 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+}
+
+/* Error state for checkbox */
+.checkmark.error {
+    border-color: #ef4444 !important;
+    background: rgba(239,68,68,0.1) !important;
+    animation: errorPulse 1s ease-out;
+}
+
+.checkbox-container.error {
+    color: #dc2626 !important;
+}
+
+.checkbox-container.shake {
+    animation: shake 340ms ease-in-out;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-8px); }
+    50% { transform: translateX(8px); }
+    75% { transform: translateX(-8px); }
+}
+
+@keyframes errorPulse {
+    0% {
+        border-color: #ef4444;
+        background: rgba(239,68,68,0.1);
+        box-shadow: 0 0 0 0 rgba(239,68,68,0.4);
+    }
+    50% {
+        box-shadow: 0 0 0 8px rgba(239,68,68,0);
+    }
+    100% {
+        border-color: #ef4444;
+        background: rgba(239,68,68,0.1);
+        box-shadow: 0 0 0 0 rgba(239,68,68,0);
+    }
+}
+
+/* Ripple effect inside checkmark */
+.check-ripple {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: rgba(239,68,68,0.3);
+    pointer-events: none;
+    will-change: transform, opacity;
+    z-index: 3;
+}
+
+@keyframes checkRipple {
+    0% { 
+        transform: translate(-50%, -50%) scale(0.3); 
+        opacity: 0.8; 
+    }
+    50% { 
+        transform: translate(-50%, -50%) scale(1.5); 
+        opacity: 0.4; 
+    }
+    100% { 
+        transform: translate(-50%, -50%) scale(2.5); 
+        opacity: 0; 
+    }
+}
+
+.check-ripple.animate { 
+    animation: checkRipple 600ms cubic-bezier(.4,.0,.2,1) forwards; 
 }
 
 .forgot-password {
