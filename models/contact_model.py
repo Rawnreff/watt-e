@@ -28,3 +28,4 @@ class ContactModel:
 
 contact_model = ContactModel()
 
+
